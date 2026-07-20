@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Profile>Reach</Profile>
+  <Platform>DesktopGL</Platform>
+  <Config />
+  <SourceFiles>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/Images/AbelPlayerNew.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/Images/DoorFrameLocked.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/Images/FloorLevelOne.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/Images/Paper.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/Images/Rock.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/Images/WallsLevelOne.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/UI/QuitButtons.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/UI/SettingsButton.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/UI/StartButton.png</File>
+  </SourceFiles>
+  <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+  </DestFiles>
+</SourceFileCollection>
