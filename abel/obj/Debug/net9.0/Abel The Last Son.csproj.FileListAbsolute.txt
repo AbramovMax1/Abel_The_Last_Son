@@ -90,3 +90,9 @@ C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\obj\Debug\
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The Last Son.pdb
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The Last Son.genruntimeconfig.cache
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\obj\Debug\net9.0\ref\Abel The Last Son.dll
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\DoorFrameLockedFloorOne-export.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\DoorFrameLockedFlootTwo.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\DoorFrameUnlockedFloorOne-export.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\DoorFrameUnlockedFloorTwo.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Back-Animation-Sprite.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Right-Animation-Player.xnb
