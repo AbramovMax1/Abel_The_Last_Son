@@ -32,14 +32,16 @@ public class InputManager : IUpdateable
     {
         // ======== F button ======== (fullScreen control)  
         currentKeyboardState = Keyboard.GetState();
-        if (currentKeyboardState.IsKeyDown(Keys.F) &&
-            previousKeyboardState.IsKeyUp(Keys.F)) // check if the F button was pressed for a single frame
+        if (currentKeyboardState.IsKeyDown(Keys.F11) &&
+            previousKeyboardState.IsKeyUp(Keys.F11)) // check if the F button was pressed for a single frame
         {
-            if (isFullScreen) graphics.IsFullScreen = false; 
-            if (!isFullScreen) graphics.IsFullScreen = true; 
+            isFullScreen = !isFullScreen;
+            graphics.IsFullScreen = isFullScreen;
+            graphics.ApplyChanges();
+            
             Console.WriteLine("pressed the F key");
             Console.WriteLine( graphics.IsFullScreen);
-            graphics.ApplyChanges();
+            
         }
         previousKeyboardState = Keyboard.GetState();
     }

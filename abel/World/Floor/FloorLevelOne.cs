@@ -4,7 +4,7 @@ namespace Abel_The_Last_Son.World.Floor;
 
 public class FloorLevelOne : Sprite
 {
-    public FloorLevelOne() : base("FloorLevelOne")
+    public FloorLevelOne() : base("FloorOne")
     {
     }
 
@@ -12,7 +12,7 @@ public class FloorLevelOne : Sprite
     {
         base.Start();
         transform.position = Game1._screenCenter; // center the sprite 
-        transform.scale = new Vector2(13f, 13f); // scale for the floor
+        transform.scale = new Vector2(15f, 15f); // scale for the floor
         sortingOrder = 1;
     }
 }

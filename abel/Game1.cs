@@ -40,7 +40,7 @@ public class Game1 : Game
 
     // ============
     // walls
-    private WallLevelFirst wallLevelFirst = null;
+    //private WallLevelFirst wallLevelFirst = null;
 
     // ============
     // Doors
@@ -48,7 +48,7 @@ public class Game1 : Game
     
     // ============
     // Floors
-    private FloorLevelOne floorLevelOne = null;
+    private FloorLevelOne floorOne = null;
     
     // =============
     // NotCollectibles floor trash
@@ -111,9 +111,6 @@ public class Game1 : Game
         //NotCollectible Trash
         TrashPaper();
         
-        // walls
-        WallsLevelOneSprite(); // wall sprite for level one
-        
         // doors
         RightDoorLocked();
         
@@ -144,15 +141,9 @@ public class Game1 : Game
     void FloorLevelOne()
     {
         new SpriteManager(Content);
-        SpriteManager.AddSprite("FloorLevelOne", "Images/FloorLevelOne");
+        SpriteManager.AddSprite("FloorOne", "Images/FloorOne");
     }
     
-    void WallsLevelOneSprite()
-    {
-        // walls
-        new SpriteManager(Content);
-        SpriteManager.AddSprite("WallsLevelOne", "Images/WallsLevelOne");
-    }
 
     void PlayerSprite()
     {
@@ -187,16 +178,16 @@ public class Game1 : Game
         QuitGame();
         
         // Floor
-        floorLevelOne = new FloorLevelOne();
-        floorLevelOne.Start();
+        floorOne = new FloorLevelOne();
+        floorOne.Start();
         
         // Trash
         notColletiblesPaper = new NotColletiblesPaper();
         notColletiblesPaper.Start();
         
         // wall
-        wallLevelFirst = new WallLevelFirst();
-        wallLevelFirst.Start();
+        //wallLevelFirst = new WallLevelFirst();
+        //wallLevelFirst.Start();
         
         // doors
         lockedDoor = new LockedDoor();
@@ -207,9 +198,9 @@ public class Game1 : Game
         player.Start();
         
         // The list will use sortingOrder to decide what draws first.
-        sprites.Add(floorLevelOne);
+        sprites.Add(floorOne);
         sprites.Add(notColletiblesPaper);
-        sprites.Add(wallLevelFirst);
+        //sprites.Add(wallLevelFirst);
         sprites.Add(lockedDoor);
         sprites.Add(player);
     }
