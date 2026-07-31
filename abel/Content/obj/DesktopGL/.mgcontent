@@ -4,15 +4,15 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/Images/AbelPlayerNew.png</File>
-    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/Images/DoorFrameLocked.png</File>
-    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/Images/FloorLevelOne.png</File>
-    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/Images/Paper.png</File>
-    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/Images/Rock.png</File>
-    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/Images/WallsLevelOne.png</File>
-    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/UI/QuitButtons.png</File>
-    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/UI/SettingsButton.png</File>
-    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel The Last Son/Content/UI/StartButton.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/AbelPlayerNew.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/FloorOne.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/FloorTwo.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/HollyWater.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Paper.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Rock.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/UI/QuitButtons.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/UI/SettingsButton.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/UI/StartButton.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />
