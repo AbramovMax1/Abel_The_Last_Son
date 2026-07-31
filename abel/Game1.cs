@@ -5,7 +5,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using Abel_The_Last_Son.Manager;
 using Abel_The_Last_Son.World.Doors;
 using Abel_The_Last_Son.World.Trash;
 
@@ -16,6 +18,7 @@ public class Game1 : Game
     // =========== references =============
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    private InputManager inputManager;
 
     private bool gameStarted = false; // game run or not
 
@@ -60,7 +63,10 @@ public class Game1 : Game
     // ==========
     // sorting order sprit
     private List<Sprite> sprites = new List<Sprite>();
-
+    
+    
+  
+    
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -71,7 +77,7 @@ public class Game1 : Game
         _graphics.PreferredBackBufferWidth = 1920;
         _graphics.PreferredBackBufferHeight = 1080;
 
-        _graphics.IsFullScreen = true; // make the interface full screen.
+        _graphics.IsFullScreen = false; // make the interface full screen. 
 
         // center screen positon 
         _screenCenter = new Vector2(
@@ -84,6 +90,7 @@ public class Game1 : Game
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
+        inputManager = new InputManager();
 
         base.Initialize();
     }
@@ -265,6 +272,14 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
+        
+        inputManager.FullscreenFlip(_graphics);
+       
+       
+        
+        
+      
+        
         
         base.Update(gameTime);
     }
