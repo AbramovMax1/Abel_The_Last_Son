@@ -11,6 +11,9 @@ public class Player : Sprite
     // ================================
     private float playerSpeedMovement = 300f;
     private float playerSpeedRotation = 0f;
+    private int currentFrame = 0;
+    private float animationTimer = 0f;
+    private float animationSpeed = 0.12f;
 
     public Player() : base("Abel")
     {
@@ -27,6 +30,7 @@ public class Player : Sprite
     public override void Update(GameTime gameTime)
     {
         PlayerMovement(gameTime);
+        PlayerAnimation(gameTime);
     }
 
     public void PlayerMovement(GameTime gameTime)
@@ -53,6 +57,29 @@ public class Player : Sprite
         if (Keyboard.GetState().IsKeyDown(Keys.W)) // Pressing W going left 
         {
             transform.position += new Vector2(0, -playerSpeedMovement * deltaTime);
+        }
+    }
+
+    private void PlayerAnimation(GameTime gameTime)
+    {
+        animationTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        if (animationTimer >= animationSpeed)
+        {
+            animationSpeed = 0f;
+            currentFrame++;
+            
+            int totalFrames = spriteSheet.columns * spriteSheet.rows;
+
+            if (currentFrame >= totalFrames)
+            {
+                currentFrame = 0;
+            }
+            
+            int column = currentFrame % spriteSheet.columns;
+            int row = currentFrame / spriteSheet.rows;
+            
+            SetFrame(column, row);
         }
     }
 }

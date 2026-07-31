@@ -26,8 +26,7 @@ public class Sprite : IUpdateable, IDrawable
     {
         texture = spriteSheet.texture;
         
-        sourceRectangle = texture.Bounds;
-        origin = new Vector2(texture.Width * 0.5f, texture.Height * 0.5f);
+        SetFrame(0,0);
     }
     
 
@@ -67,5 +66,18 @@ public class Sprite : IUpdateable, IDrawable
             spriteEffects,
             0f
             );
+    }
+
+    protected void SetFrame(int column, int row)
+    {
+        sourceRectangle = spriteSheet[column, row];
+
+        // centering pivot based on the small frame, not the whole sheet.
+
+        origin = new Vector2(
+            sourceRectangle.Value.Width * 0.5f,
+            sourceRectangle.Value.Height * 0.5f
+        );
+
     }
 }
