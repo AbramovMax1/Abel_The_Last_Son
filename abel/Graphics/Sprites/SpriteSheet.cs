@@ -1,4 +1,4 @@
-using System.Drawing;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Abel_The_Last_Son;
@@ -13,8 +13,8 @@ public class SpriteSheet
     {
         get
         {
-            int width = texture.Width / rows;
-            int height = texture.Height / columns;
+            int width = texture.Width / columns; // Each small frame width.
+            int height = texture.Height / rows; // Each small frame height.
 
             int postion_x = width * x;
             int postion_y = height * y;

@@ -116,6 +116,9 @@ public class Game1 : Game
         
         // Characters
         PlayerSprite(); // player sprite
+        PlayerFrontAnimation(); // player front animation
+        PlayerBackAnimation(); // player back animation
+        PlayerRightAnimation(); // player right animation 
 
         // ============
         // UI - Buttons
@@ -126,6 +129,8 @@ public class Game1 : Game
         Start();
     }
 
+    
+    
     void TrashPaper()
     {
         new SpriteManager(Content);
@@ -152,6 +157,20 @@ public class Game1 : Game
         SpriteManager.AddSprite("Abel", "Images/AbelPlayerNew");
     }
 
+    void PlayerFrontAnimation()
+    {
+        SpriteManager.AddSprite("AbelFrontAnimation", "Images/Front-Animation-Sprite", 4, 2);
+    }
+
+    void PlayerBackAnimation()
+    {
+        SpriteManager.AddSprite("AbelBackAnimation", "Images/Back-Animation-Sprite", 4, 2);
+    }
+
+    void PlayerRightAnimation()
+    {
+        SpriteManager.AddSprite("AbelRightAnimation", "Images/Right-Animation-Player", 4, 1);
+    }
     void UiButtonsSprite()
     {
         // ======== UI buttons
