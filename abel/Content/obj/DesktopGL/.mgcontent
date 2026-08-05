@@ -6,6 +6,7 @@
   <SourceFiles>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/AbelPlayerNew.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Back-Animation-Sprite.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Back-Animation-Zombie.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/DoorFrameLockedFloorOne-export.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/DoorFrameLockedFlootTwo.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/DoorFrameUnlockedFloorOne-export.png</File>
@@ -13,15 +14,22 @@
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/FloorOne.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/FloorTwo.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Front-Animation-Sprite.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Front-Animation-Zombie.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/HollyWater.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Left-Aniamtion-Zombie.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Paper.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Right-Animation-Player.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Right-Animation-Zombie.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Rock.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/UI/QuitButtons.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/UI/SettingsButton.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/UI/StartButton.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

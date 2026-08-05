@@ -1,3 +1,6 @@
+using System;
+using System.Runtime.Intrinsics.X86;
+using Abel_The_Last_Son.Core.Enums;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -6,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Abel_The_Last_Son;
 
-public class Player : Sprite
+public class Player : Sprite , ICollidable, IDamageable
 {
     // ================================
     // Player settings
@@ -19,25 +22,29 @@ public class Player : Sprite
     private bool isMoving = false; // false mean abel is standing still.
     private KeyboardState previousKeyboardState;
     
+    private float damageCooldownTimer = 0f;
+    private const float DamageProtectionTime = 1f;
+    public bool CanTakeDamage => damageCooldownTimer <= 0f;
+    
+    // Player Stats 
+
+    public int MaxHealth { get; } = 3; // Max health of the player is 3 hearts 
+    public int Health { get; private set; } = 3; 
+    public bool IsDead => Health <= 0;
+    
     // ANIMATION 
-    private PlayerDirection currentDirection = PlayerDirection.Front;
     private SpriteSheet frontAnimation;
     private SpriteSheet backAnimation;
     private SpriteSheet rightAnimation;
     private SpriteSheet leftAnimation;
-    
-    
+
+
     public Player() : base("AbelFrontAnimation")
     {
     }
 
-    private enum PlayerDirection
-    {
-        Front, // S direction
-        Back, // W direction
-        Right, // D direction
-        Left // A direction
-    }
+    // Other objects may read the direction (get is public) but only player can changge it (set private)
+    public Direction FacingDirection { get; private set; } = Direction.Front;
 
     
     public override void Start()
@@ -55,6 +62,13 @@ public class Player : Sprite
 
     public override void Update(GameTime gameTime)
     {
+        if (damageCooldownTimer > 0f)
+        {
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            
+            damageCooldownTimer -= deltaTime;
+        }
+        
         PlayerMovement(gameTime);
         PlayerAnimation(gameTime);
     }
@@ -139,7 +153,7 @@ public void PlayerMovement(GameTime gameTime)
     if (pressedA)
     {
         // Remember the new facing direction.
-        currentDirection = PlayerDirection.Left;
+        FacingDirection = Direction.Left;
 
         // Left uses the right sheet reflected in a mirror.
         ChangeAnimation(rightAnimation);
@@ -152,7 +166,7 @@ public void PlayerMovement(GameTime gameTime)
     if (pressedD)
     {
         // Remember the new facing direction.
-        currentDirection = PlayerDirection.Right;
+        FacingDirection = Direction.Right;
 
         // Use the right-facing animation.
         ChangeAnimation(rightAnimation);
@@ -165,7 +179,7 @@ public void PlayerMovement(GameTime gameTime)
     if (pressedW)
     {
         // Remember the new facing direction.
-        currentDirection = PlayerDirection.Back;
+        FacingDirection = Direction.Back;
 
         // Use the back-facing animation.
         ChangeAnimation(backAnimation);
@@ -180,7 +194,7 @@ public void PlayerMovement(GameTime gameTime)
     if (pressedS)
     {
         // Remember the new facing direction.
-        currentDirection = PlayerDirection.Front;
+        FacingDirection = Direction.Front;
 
         // Use the front-facing animation.
         ChangeAnimation(frontAnimation);
@@ -196,10 +210,10 @@ public void PlayerMovement(GameTime gameTime)
     // Check whether the key that selected the current animation
     // is still being held by the player.
     bool currentDirectionIsStillHeld =
-        (currentDirection == PlayerDirection.Back && keyboard.IsKeyDown(Keys.W)) ||
-        (currentDirection == PlayerDirection.Front && keyboard.IsKeyDown(Keys.S)) ||
-        (currentDirection == PlayerDirection.Right && keyboard.IsKeyDown(Keys.D)) ||
-        (currentDirection == PlayerDirection.Left && keyboard.IsKeyDown(Keys.A));
+        (FacingDirection == Direction.Back && keyboard.IsKeyDown(Keys.W)) ||
+        (FacingDirection == Direction.Front && keyboard.IsKeyDown(Keys.S)) ||
+        (FacingDirection == Direction.Right && keyboard.IsKeyDown(Keys.D)) ||
+        (FacingDirection == Direction.Left && keyboard.IsKeyDown(Keys.A));
 
     // If the newest direction key was released, choose another
     // direction key that is still held.
@@ -208,28 +222,28 @@ public void PlayerMovement(GameTime gameTime)
         // W is still held, so go back to the back-facing animation.
         if (keyboard.IsKeyDown(Keys.W))
         {
-            currentDirection = PlayerDirection.Back;
+            FacingDirection = Direction.Back;
             ChangeAnimation(backAnimation);
             spriteEffects = SpriteEffects.None;
         }
         // S is still held, so go back to the front-facing animation.
         else if (keyboard.IsKeyDown(Keys.S))
         {
-            currentDirection = PlayerDirection.Front;
+            FacingDirection = Direction.Front;
             ChangeAnimation(frontAnimation);
             spriteEffects = SpriteEffects.None;
         }
         // D is still held, so go back to the right-facing animation.
         else if (keyboard.IsKeyDown(Keys.D))
         {
-            currentDirection = PlayerDirection.Right;
+            FacingDirection = Direction.Right;
             ChangeAnimation(rightAnimation);
             spriteEffects = SpriteEffects.None;
         }
         // A is still held, so use the mirrored right-facing animation.
         else if (keyboard.IsKeyDown(Keys.A))
         {
-            currentDirection = PlayerDirection.Left;
+            FacingDirection = Direction.Left;
             ChangeAnimation(rightAnimation);
             spriteEffects = SpriteEffects.FlipHorizontally;
         }
@@ -314,5 +328,46 @@ public void PlayerMovement(GameTime gameTime)
 
         // Display the first frame immediately.
         SetFrame(0, 0);
+    }
+
+    public Rectangle Collider
+    {
+        get
+        {
+            int width = 70; // collider width
+            int height = 120; // collider height
+            
+            // This x and y helping to center our collider.
+            int x = (int)transform.position.X - width / 2;
+            int y = (int)transform.position.Y - height / 2 + 5;
+            return new Rectangle(x, y, width, height);
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (IsDead)
+        {
+            return;
+        }
+
+        if (!CanTakeDamage)
+        {
+            return;
+        }
+        
+        Health -= damage;
+
+        if (Health <= 0)
+        {
+            Health = 0;
+        }
+
+        damageCooldownTimer = DamageProtectionTime; // when take damage start the cooldown protection.
+        
+        if (IsDead)
+        {
+            Console.WriteLine("Player is dead");
+        }
     }
 }

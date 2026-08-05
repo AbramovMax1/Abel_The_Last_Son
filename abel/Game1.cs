@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Abel_The_Last_Son.Enemies;
 using Abel_The_Last_Son.Manager;
 using Abel_The_Last_Son.World.Doors;
 using Abel_The_Last_Son.World.Trash;
@@ -25,6 +26,7 @@ public class Game1 : Game
     // ============
     // Texture
     private Texture2D _logo;
+    private Texture2D debugPixel;
 
     // ============
     // screenCenter
@@ -64,6 +66,11 @@ public class Game1 : Game
     // sorting order sprit
     private List<Sprite> sprites = new List<Sprite>();
     
+    // ==========
+    // Enemies:
+    // Zombie
+    private Zombie zombie;
+    private readonly List<Zombie> zombies = new List<Zombie>(); //list of zombies
     
   
     
@@ -104,6 +111,9 @@ public class Game1 : Game
         // ============
         // Texture/Sprite
         // ============
+
+        debugPixel = new Texture2D(GraphicsDevice, 1, 1);
+        debugPixel.SetData(new[] { Color.White });
         
         // Floor
         FloorLevelOne(); // wall sprit for level one
@@ -125,6 +135,12 @@ public class Game1 : Game
         // ============
 
         UiButtonsSprite(); // UI buttons sprite 
+        
+        
+        //=============
+        // Enemies
+        //=============
+        ZombieAnimation(); // zombie animation
 
         Start();
     }
@@ -216,6 +232,12 @@ public class Game1 : Game
         player = new Player();
         player.Start();
         
+        // zombie
+        zombie = new Zombie(player);
+        zombie.Start();
+        zombies.Add(zombie); // add the zombie into the list 
+        sprites.Add(zombie); // add zombie into the sprite list 
+        
         // The list will use sortingOrder to decide what draws first.
         sprites.Add(floorOne);
         sprites.Add(notColletiblesPaper);
@@ -270,6 +292,12 @@ public class Game1 : Game
         if (gameStarted)
         {
             player.Update(gameTime);
+
+            foreach (Zombie enemy in zombies)
+            {
+                enemy.Update(gameTime);
+            }
+            CheckEnemyPlayerCollisions();
         }
         else
         {
@@ -284,13 +312,6 @@ public class Game1 : Game
             Exit();
         
         inputManager.FullscreenFlip(_graphics);
-       
-       
-        
-        
-      
-        
-        
         base.Update(gameTime);
     }
 
@@ -319,6 +340,22 @@ public class Game1 : Game
             QuitButton.Draw(_spriteBatch);
         }
         
+        // ==========
+        // Draw Colliders
+        // ==========
+        if (gameStarted) // if the game is started draw the collider.
+        {
+            DrawCollider(player.Collider, Color.LimeGreen);
+
+            foreach (Zombie enemy in zombies)
+            {
+                if (!enemy.IsDead)
+                {
+                    DrawCollider(enemy.Collider, Color.Red);
+                }
+            }
+        }
+        
         // ending 
         _spriteBatch.End();
         
@@ -326,5 +363,61 @@ public class Game1 : Game
         // TODO: Add your drawing code here
 
         base.Draw(gameTime);
+    }
+
+    private void DrawCollider(Rectangle rectangle, Color color)
+    {
+        int thickness = 3; // this is the thickness of the collider
+        
+        // top collider
+        _spriteBatch.Draw(
+            debugPixel,
+            new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, thickness),
+            color);
+        
+        // Bottom collider
+        _spriteBatch.Draw(
+            debugPixel,
+            new Rectangle(rectangle.X, rectangle.Bottom - thickness, rectangle.Width, thickness),
+            color);
+        
+        // Left collider
+        _spriteBatch.Draw(debugPixel,
+            new Rectangle(rectangle.X ,rectangle.Y ,thickness, rectangle.Height),
+                color);
+        
+        // Right Collider
+        _spriteBatch.Draw(
+            debugPixel,
+            new Rectangle(rectangle.Right -  thickness, rectangle.Y, thickness, rectangle.Height),
+            color);
+        
+    }
+
+    private void ZombieAnimation()
+    {
+        SpriteManager.AddSprite("ZombieFrontAnimation", "Images/Front-Animation-Zombie", 4, 2);
+        SpriteManager.AddSprite("ZombieBackAnimation", "Images/Back-Animation-Zombie", 4, 2);
+        SpriteManager.AddSprite("ZombieLeftAnimation", "Images/Left-Aniamtion-Zombie", 4, 1);
+        SpriteManager.AddSprite("ZombieRightAnimation", "Images/Right-Animation-Zombie", 4, 1);
+    }
+
+    private void CheckEnemyPlayerCollisions()
+    {
+        foreach (Zombie enemy in zombies)
+        {
+            if (enemy.IsDead)
+            {
+                continue;
+            }
+
+            bool isTouchingPlayer = enemy.Collider.Intersects(player.Collider);
+
+            if (isTouchingPlayer)
+            {
+                player.TakeDamage(enemy.ContactDamage);
+                Console.WriteLine($"Player health: {player.Health}");
+            }
+        }
     }
 }
