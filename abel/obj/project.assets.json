@@ -310,26 +310,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ariel\\.nuget\\packages\\": {}
+    "C:\\Users\\maxsi\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\unity projects\\Abel_The_Last_Son\\abel\\Abel The Last Son.csproj",
+      "projectUniqueName": "C:\\Users\\maxsi\\RiderProjects\\Abel The Last Son\\Abel_The_Last_Son\\abel\\Abel The Last Son.csproj",
       "projectName": "Abel The Last Son",
-      "projectPath": "C:\\unity projects\\Abel_The_Last_Son\\abel\\Abel The Last Son.csproj",
-      "packagesPath": "C:\\Users\\ariel\\.nuget\\packages\\",
-      "outputPath": "C:\\unity projects\\Abel_The_Last_Son\\abel\\obj\\",
+      "projectPath": "C:\\Users\\maxsi\\RiderProjects\\Abel The Last Son\\Abel_The_Last_Son\\abel\\Abel The Last Son.csproj",
+      "packagesPath": "C:\\Users\\maxsi\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\maxsi\\RiderProjects\\Abel The Last Son\\Abel_The_Last_Son\\abel\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ariel\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\maxsi\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -377,19 +375,19 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[9.0.17, 9.0.17]"
+            "version": "[9.0.16, 9.0.16]"
           },
           {
             "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[9.0.17, 9.0.17]"
+            "version": "[9.0.16, 9.0.16]"
           },
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[9.0.17, 9.0.17]"
+            "version": "[9.0.16, 9.0.16]"
           },
           {
             "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[9.0.17, 9.0.17]"
+            "version": "[9.0.16, 9.0.16]"
           }
         ],
         "frameworkReferences": {
@@ -397,7 +395,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
