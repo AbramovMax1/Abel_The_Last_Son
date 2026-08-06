@@ -15,6 +15,8 @@ namespace Abel_The_Last_Son;
 
 public class Game1 : Game
 {
+    Camera camera;
+
     // =========== references =============
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -46,14 +48,10 @@ public class Game1 : Game
     // Doors
     private LockedDoor lockedDoor = null;
     
-    // ============
-    // Floors
-    private FloorLevelOne floorOne = null;
-    
     // =============
     // NotCollectibles floor trash
     private NotColletiblesPaper notColletiblesPaper = null;
-    
+
     // =============
     // Buttons
     private Buttons startingButton;
@@ -63,10 +61,12 @@ public class Game1 : Game
     // ==========
     // sorting order sprit
     private List<Sprite> sprites = new List<Sprite>();
-    
-    
-  
-    
+
+    // ==========
+    // floor references
+    private Floor generatedFloor;
+
+
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -89,36 +89,49 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
+        base.Initialize();
+
         // TODO: Add your initialization logic here
         inputManager = new InputManager();
+        camera = new Camera(GraphicsDevice.Viewport);
 
-        base.Initialize();
     }
 
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+        new SpriteManager(Content);
+
+        SpriteManager.WhiteTexture = new Texture2D(GraphicsDevice, 1, 1);
+        SpriteManager.WhiteTexture.SetData(new Color[] { Color.White });
 
         // TODO: use this.Content to load your game content here
 
         // ============
         // Texture/Sprite
         // ============
-        
-        // Floor
-        FloorLevelOne(); // wall sprit for level one
-        
+
+        // Dungen generation
+        FirstFloor();
+        SecondFloor();
+        FirstDoorLocked();
+        SecondDoorLocked();
+
+
+
         //NotCollectible Trash
         TrashPaper();
-        
+
         // doors
         RightDoorLocked();
-        
+
         // Characters
         PlayerSprite(); // player sprite
         PlayerFrontAnimation(); // player front animation
         PlayerBackAnimation(); // player back animation
         PlayerRightAnimation(); // player right animation 
+
+
 
         // ============
         // UI - Buttons
@@ -126,34 +139,63 @@ public class Game1 : Game
 
         UiButtonsSprite(); // UI buttons sprite 
 
+        Pixel();
+
         Start();
     }
 
-    
-    
+    void FirstFloor()
+    {
+        //new SpriteManager(Content);
+        SpriteManager.AddSprite("FloorOne", "Images/FloorOne");
+    }
+
+    void SecondFloor()
+    {
+        //new SpriteManager(Content);
+        SpriteManager.AddSprite("FloorTwo", "Images/FloorTwo");
+    }
+
+    void FirstDoorLocked()
+    {
+        //new SpriteManager(Content);
+        SpriteManager.AddSprite("DoorOneLocked", "Images/DoorFrameLockedFloorOne-export");
+    }
+
+    void SecondDoorLocked()
+    {
+        //new SpriteManager(Content);
+        SpriteManager.AddSprite("DoorTwoLocked", "Images/DoorFrameLockedFlootTwo");
+    }
+
     void TrashPaper()
     {
-        new SpriteManager(Content);
+        //new SpriteManager(Content);
         SpriteManager.AddSprite("TrashPaper", "Images/Paper");
     }
-    
+
     void RightDoorLocked()
     {
-        new SpriteManager(Content);
+        //new SpriteManager(Content);
         SpriteManager.AddSprite("RightDoorLocked", "Images/DoorFrameLocked");
     }
 
-    void FloorLevelOne()
+    // void FloorLevelOne()
+    // {
+    //     new SpriteManager(Content);
+    //     SpriteManager.AddSprite("FloorOne", "Images/FloorOne");
+    // }
+
+    void Pixel()
     {
-        new SpriteManager(Content);
-        SpriteManager.AddSprite("FloorOne", "Images/FloorOne");
+       // new SpriteManager(Content);
+        SpriteManager.AddSprite("pixel", "Images/pixel");
     }
-    
 
     void PlayerSprite()
     {
         // player
-        new SpriteManager(Content);
+        //new SpriteManager(Content);
         SpriteManager.AddSprite("Abel", "Images/AbelPlayerNew");
     }
 
@@ -171,57 +213,51 @@ public class Game1 : Game
     {
         SpriteManager.AddSprite("AbelRightAnimation", "Images/Right-Animation-Player", 4, 1);
     }
+
     void UiButtonsSprite()
     {
         // ======== UI buttons
         // StartButton 
-        new SpriteManager(Content);
+        
         SpriteManager.AddSprite("StartButton", "UI/StartButton");
-        
+
         // settingsButton
-        new SpriteManager(Content);
+        //new SpriteManager(Content);
         SpriteManager.AddSprite("SettingsButton", "UI/SettingsButton");
-        
+
         // quitButton
-        new SpriteManager(Content);
+        //new SpriteManager(Content);
         SpriteManager.AddSprite("QuitButton", "UI/QuitButtons");
     }
-    
+
     void Start()
     {
         // ===== UI ======
         // Buttons
-        
+
         StartGame();
         SettingsBtttonOnClick();
         QuitGame();
-        
-        // Floor
-        floorOne = new FloorLevelOne();
-        floorOne.Start();
-        
         // Trash
-        notColletiblesPaper = new NotColletiblesPaper();
-        notColletiblesPaper.Start();
-        
-        // wall
-        //wallLevelFirst = new WallLevelFirst();
-        //wallLevelFirst.Start();
+        notColletiblesPaper = SceneManager.Create<NotColletiblesPaper>();
         
         // doors
-        lockedDoor = new LockedDoor();
-        lockedDoor.Start();
-        
+        lockedDoor = SceneManager.Create<LockedDoor>();
+
         // player
-        player = new Player();
-        player.Start();
-        
+        player = SceneManager.Create<Player>();
+       
+        SceneManager.Instance.Start();
+
         // The list will use sortingOrder to decide what draws first.
-        sprites.Add(floorOne);
+        //sprites.Add(floorOne);
         sprites.Add(notColletiblesPaper);
         //sprites.Add(wallLevelFirst);
         sprites.Add(lockedDoor);
         sprites.Add(player);
+        
+        
+        player.Collider.RegisterOnCollision(player.OnCollisionEnter);
     }
 
     void StartGame()
@@ -237,31 +273,36 @@ public class Game1 : Game
         {
             gameStarted = true;
             IsMouseVisible = false;
+
+            generatedFloor = new Floor(); // creates a new floor
+            generatedFloor.generateFloor(Floor.Difficulty.Easy);
+            sprites.AddRange(generatedFloor.GetRoomSprites());
+
+            // Find the start room and move the player into it!
+            Room startRoom = generatedFloor.GetRoomSprites().OfType<Room>().FirstOrDefault(r => r.isStartRoom);
+            if (startRoom != null)
+            {
+                player.transform.position = startRoom.transform.position;
+            }
         };
     }
-    
+
     void SettingsBtttonOnClick()
     {
         SettingsButton = new Buttons(GraphicsDevice,
             new Rectangle(760, 430, 400, 100));
-        
+
         SettingsButton.SetTexture(SpriteManager.GetSprite("SettingsButton").texture);
 
-        SettingsButton.OnClick += () =>
-        {
-            Console.WriteLine("Settings");
-        };
-        
+        SettingsButton.OnClick += () => { Console.WriteLine("Settings"); };
+
     }
-    
+
     void QuitGame()
     {
         QuitButton = new Buttons(GraphicsDevice, new Rectangle(760, 560, 400, 100));
         QuitButton.SetTexture(SpriteManager.GetSprite("QuitButton").texture);
-        QuitButton.OnClick += () =>
-        {
-            Exit();
-        };
+        QuitButton.OnClick += () => { Exit(); };
     }
 
     protected override void Update(GameTime gameTime)
@@ -270,6 +311,7 @@ public class Game1 : Game
         if (gameStarted)
         {
             player.Update(gameTime);
+            camera.Follow(player.transform.position);
         }
         else
         {
@@ -277,20 +319,16 @@ public class Game1 : Game
             SettingsButton.Update();
             QuitButton.Update();
         }
-        
+
+        SceneManager.Instance.Update(gameTime);
+
         // ======== Esc button ======== (quit the game)
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
-        
+
         inputManager.FullscreenFlip(_graphics);
-       
-       
-        
-        
-      
-        
-        
+
         base.Update(gameTime);
     }
 
@@ -298,32 +336,39 @@ public class Game1 : Game
     {
         GraphicsDevice.Clear(Color.Black);
 
-        // starting 
-        _spriteBatch.Begin(samplerState: SamplerState.PointClamp); // make monogame not blur and make my pixel art ugly
-        
-        // ============
-        // Texture/Sprite
-        // ============
+        // ==========================================
+        // 1. WORLD DRAW (Affected by Camera)
+        // ==========================================
+        // Pass BOTH the samplerState (to stop blur) AND the camera transform!
+        _spriteBatch.Begin(
+            samplerState: SamplerState.PointClamp,
+            transformMatrix: camera.Transform);
+
+        // Draw all the in-game stuff (Room, Player, Enemies)
         foreach (Sprite sprite in sprites.OrderBy(sprite => sprite.sortingOrder))
         {
             sprite.DrawSprite(_spriteBatch);
         }
-        
-        // ============
-        // UI - Buttons 
-        // ============
+
+        _spriteBatch.End();
+
+
+        // ==========================================
+        // 2. UI DRAW (Fixed to the Screen)
+        // ==========================================
+        // Start a brand new batch for UI WITHOUT the camera matrix.
+        // (We keep PointClamp here so your button pixel art stays crisp too).
+        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+
         if (!gameStarted)
         {
             startingButton.Draw(_spriteBatch);
             SettingsButton.Draw(_spriteBatch);
             QuitButton.Draw(_spriteBatch);
         }
-        
-        // ending 
+
         _spriteBatch.End();
-        
-        
-        // TODO: Add your drawing code here
+
 
         base.Draw(gameTime);
     }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Numerics;
 
-namespace ConsoleApp1;
+namespace Abel_The_Last_Son;
 
-public class Floor
+public class Floor 
 {
     public enum Difficulty
     {
@@ -25,10 +25,10 @@ public class Floor
     private int newRows = -1;
     private int newCollumns = -1;
     private bool generatedRoom = false;
-
+    
     public Floor generateFloor(Difficulty difficulty)
     {
-        CalculateBasedOnDiffiulty(difficulty);
+        CalculateBasedOnDiffiulty(difficulty, out Vector2 grideCenter);
         bool generationSuccessful = false;
         while (!generationSuccessful) // loop until making a complete dungeon
         {
@@ -40,7 +40,7 @@ public class Floor
 
             // generate the first room 
             roomQueue.Enqueue(roomArray[collumns / 2, rows / 2] =
-                new Room().CreateRoom(difficulty, rows / 2, collumns / 2, null, true));
+                new Room("FloorOne", difficulty, rows / 2, collumns / 2,grideCenter , Room.Direction.None, true, true));
             Room currentRoom = null;
             dequeueRoom = true;
 
@@ -197,11 +197,11 @@ public class Floor
                         Room adjacentRoom = roomArray[newCollumns, newRows];
 
                         // Create the door on the current room 
-                        currentRoom.AddDoor(direction, new Door(direction));
+                        currentRoom.AddDoor(TransferIntToDirection(direction), true);
 
                         // Create the matching opposite door on the existing room to close the loop 
                         int oppositeDirection = (direction + 2) % 4;
-                        adjacentRoom.AddDoor(oppositeDirection, new Door(oppositeDirection));
+                        adjacentRoom.AddDoor(TransferIntToDirection(direction), true);
 
                         continue; // Skip creating a new room since it's already there 
                     }
@@ -216,15 +216,15 @@ public class Floor
                     if (!currentRoom.isStartRoom) // checks if the current room is not a starting room 
                     {
                         // makes a random calculation to see if there will be a door here if successful add a door to the current direction 
-                        if (rnd.Next(5) == 1) currentRoom.AddDoor(direction, new Door(direction));
-                        else currentRoom.AddDoor(direction, null);
+                        if (rnd.Next(5) == 1) currentRoom.AddDoor(TransferIntToDirection(direction), true);
+                        else currentRoom.AddDoor(TransferIntToDirection(direction), false);
                     }
                     else
                     {
                         // makes a random calculation to see if there will be a door here if successful add a door to the current direction 
                         // (more forgiving becuse it is a starting room) 
-                        if (rnd.Next(3) >= 1) currentRoom.AddDoor(direction, new Door(direction));
-                        else currentRoom.AddDoor(direction, null);
+                        if (rnd.Next(3) >= 1) currentRoom.AddDoor(TransferIntToDirection(direction),true);
+                        else currentRoom.AddDoor(TransferIntToDirection(direction), false);
                     }
 
                     //if there is no door no need for the next logic 
@@ -237,8 +237,8 @@ public class Floor
                     DirectionConvertor(direction, currentRoom, out newRows, out newCollumns);
                     roomQueue.Enqueue(currentRoom);
                     // create a new room based on the current difficulty, array, and makes the entrance direction the inverted of this direction 
-                    currentRoom = new Room().CreateRoom
-                        (difficulty, newRows, newCollumns, (direction + 2) % 4);
+                    currentRoom = new Room
+                        ("FloorOne",difficulty, newRows, newCollumns,grideCenter ,TransferIntToDirection((direction + 2) % 4));
                     roomArray[newCollumns, newRows] = currentRoom;
                     currentRoomAmount++;
                     generatedRoom = true;
@@ -291,7 +291,14 @@ public class Floor
             }
             generationSuccessful = true;
         }
-        
+
+        foreach (Room room in roomArray)
+        {
+            if (room != null)
+            {
+                room.FinnishedRoomGeneration();
+            }
+        }
         return this;
     }
 
@@ -331,9 +338,10 @@ public class Floor
     }
     
     // calculate the room amount and grid size based on the floor difficulty
-    private void CalculateBasedOnDiffiulty(Difficulty difficulty) 
+    private void CalculateBasedOnDiffiulty(Difficulty difficulty, out Vector2 gridCenter) 
     {
         Random rnd = new Random();
+        Vector2 grideCenter;
         switch (difficulty)
         {
             case Difficulty.Easy: // easy difficulty, room amount between 5 - 8, grid size 11
@@ -355,8 +363,29 @@ public class Floor
                 break;
             }
         }
+        grideCenter.X = rows * 0.5f;
+        grideCenter.Y = collumns * 0.5f;
         roomArray = new Room[collumns, rows]; // sets the grid size to the chosen size
         Console.WriteLine($"roomAmount:{roomAmount}, rows:{rows} , collumns:{collumns}");
+
+
+        gridCenter = grideCenter;
+    }
+
+    public Room.Direction TransferIntToDirection(int direction)
+    {
+        switch (direction)
+        {
+            case 0:
+                return Room.Direction.Up;
+            case 1:
+                return Room.Direction.Right;
+            case 2:
+                return Room.Direction.Down;
+            case 3:
+                return Room.Direction.Left;
+        }
+        return  Room.Direction.None;
     }
 
     public void PrintRoomArray() // prints the room to the  consule for testing
@@ -376,6 +405,20 @@ public class Floor
             Console.WriteLine();
 
         }
+    }
+
+    public List<Sprite> GetRoomSprites()
+    {
+        List<Sprite> spriteList = new List<Sprite>();
+        foreach (Room room in roomArray)
+        {
+            if (room != null)
+            {
+                spriteList.Add(room);
+            }
+        }
+
+        return spriteList;
     }
     
     public  override string ToString() // overrides the to string function to show the room amount and aray size

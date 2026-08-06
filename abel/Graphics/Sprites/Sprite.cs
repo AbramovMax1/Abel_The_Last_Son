@@ -13,7 +13,7 @@ public class Sprite : IUpdateable, IDrawable
     public SpriteEffects spriteEffects = SpriteEffects.None;
 
     protected Rectangle? sourceRectangle = null;
-    protected Rectangle destinationRectangle;
+    public Rectangle destinationRectangle;
     
     private Vector2 origin;
 
@@ -51,7 +51,7 @@ public class Sprite : IUpdateable, IDrawable
             height);
     }
 
-    public void DrawSprite(SpriteBatch spriteBatch)
+    public virtual void DrawSprite(SpriteBatch spriteBatch)
     {
         
         destinationRectangle = GetDestinationRectangle(sourceRectangle);

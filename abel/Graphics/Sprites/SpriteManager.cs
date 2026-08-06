@@ -9,6 +9,8 @@ public class SpriteManager
     private static Dictionary<string, SpriteSheet> sprites = new Dictionary<string, SpriteSheet>();
     
     private static ContentManager _content;
+    
+    public static Texture2D WhiteTexture;
 
     public SpriteManager(ContentManager content)
     {
