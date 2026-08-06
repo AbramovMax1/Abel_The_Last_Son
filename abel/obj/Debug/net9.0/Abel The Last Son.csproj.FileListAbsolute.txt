@@ -96,60 +96,7 @@ C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\DoorFrameUnlockedFloorTwo.xnb
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Back-Animation-Sprite.xnb
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Right-Animation-Player.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\DoorFrameLocked.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\FloorLevelOne.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\WallsLevelOne.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\AbelPlayerNew.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Back-Animation-Sprite.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\DoorFrameLockedFloorOne-export.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\DoorFrameLockedFlootTwo.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\DoorFrameUnlockedFloorOne-export.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\DoorFrameUnlockedFloorTwo.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\FloorOne.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\FloorTwo.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Front-Animation-Sprite.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\HollyWater.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Paper.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Right-Animation-Player.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Rock.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\QuitButtons.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\SettingsButton.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\StartButton.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Abel The Last Son.exe
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Abel The Last Son.deps.json
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Abel The Last Son.runtimeconfig.json
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Abel The Last Son.dll
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Abel The Last Son.pdb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\MonoGame.Framework.dll
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\NVorbis.dll
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\android-arm\native\libopenal.so
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\android-arm64\native\libopenal.so
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\android-x64\native\libopenal.so
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\android-x86\native\libopenal.so
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\ios-arm64\native\libopenal.a
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\iossimulator-arm64\native\libopenal.a
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\iossimulator-x64\native\libopenal.a
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\linux-arm64\native\libopenal.so
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\linux-x64\native\libopenal.so
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\osx\native\libopenal.dylib
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\win-arm64\native\openal.dll
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\win-x64\native\openal.dll
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\linux-arm64\native\libSDL2-2.0.so.0
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\linux-x64\native\libSDL2-2.0.so.0
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\osx\native\libSDL2-2.0.0.dylib
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\win-arm64\native\SDL2.dll
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\win-x64\native\SDL2.dll
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\mgcb.tool.restore
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The Last Son.csproj.AssemblyReference.cache
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The Last Son.GeneratedMSBuildEditorConfig.editorconfig
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The Last Son.AssemblyInfoInputs.cache
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The Last Son.AssemblyInfo.cs
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The Last Son.csproj.CoreCompileInputs.cache
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The Last Son.sourcelink.json
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The.3015F2DD.Up2Date
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The Last Son.dll
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\refint\Abel The Last Son.dll
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The Last Son.pdb
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The Last Son.genruntimeconfig.cache
-C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\ref\Abel The Last Son.dll
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\pixel.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Back-Animation-Zombie.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Front-Animation-Zombie.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Left-Aniamtion-Zombie.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Right-Animation-Zombie.xnb

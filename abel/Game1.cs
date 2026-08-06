@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Abel_The_Last_Son.Enemies;
 using Abel_The_Last_Son.Manager;
 using Abel_The_Last_Son.World.Doors;
 using Abel_The_Last_Son.World.Trash;
@@ -15,8 +16,6 @@ namespace Abel_The_Last_Son;
 
 public class Game1 : Game
 {
-    Camera camera;
-
     // =========== references =============
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -27,6 +26,7 @@ public class Game1 : Game
     // ============
     // Texture
     private Texture2D _logo;
+    private Texture2D debugPixel;
 
     // ============
     // screenCenter
@@ -48,10 +48,14 @@ public class Game1 : Game
     // Doors
     private LockedDoor lockedDoor = null;
     
+    // ============
+    // Floors
+    private FloorLevelOne floorOne = null;
+    
     // =============
     // NotCollectibles floor trash
     private NotColletiblesPaper notColletiblesPaper = null;
-
+    
     // =============
     // Buttons
     private Buttons startingButton;
@@ -61,12 +65,15 @@ public class Game1 : Game
     // ==========
     // sorting order sprit
     private List<Sprite> sprites = new List<Sprite>();
-
+    
     // ==========
-    // floor references
-    private Floor generatedFloor;
-
-
+    // Enemies:
+    // Zombie
+    private Zombie zombie;
+    private readonly List<Zombie> zombies = new List<Zombie>(); //list of zombies
+    
+  
+    
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -89,21 +96,15 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
-        base.Initialize();
-
         // TODO: Add your initialization logic here
         inputManager = new InputManager();
-        camera = new Camera(GraphicsDevice.Viewport);
 
+        base.Initialize();
     }
 
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        new SpriteManager(Content);
-
-        SpriteManager.WhiteTexture = new Texture2D(GraphicsDevice, 1, 1);
-        SpriteManager.WhiteTexture.SetData(new Color[] { Color.White });
 
         // TODO: use this.Content to load your game content here
 
@@ -111,91 +112,64 @@ public class Game1 : Game
         // Texture/Sprite
         // ============
 
-        // Dungen generation
-        FirstFloor();
-        SecondFloor();
-        FirstDoorLocked();
-        SecondDoorLocked();
-
-
-
+        debugPixel = new Texture2D(GraphicsDevice, 1, 1);
+        debugPixel.SetData(new[] { Color.White });
+        
+        // Floor
+        FloorLevelOne(); // wall sprit for level one
+        
         //NotCollectible Trash
         TrashPaper();
-
+        
         // doors
         RightDoorLocked();
-
+        
         // Characters
         PlayerSprite(); // player sprite
         PlayerFrontAnimation(); // player front animation
         PlayerBackAnimation(); // player back animation
         PlayerRightAnimation(); // player right animation 
 
-
-
         // ============
         // UI - Buttons
         // ============
 
         UiButtonsSprite(); // UI buttons sprite 
-
-        Pixel();
+        
+        
+        //=============
+        // Enemies
+        //=============
+        ZombieAnimation(); // zombie animation
 
         Start();
     }
 
-    void FirstFloor()
-    {
-        //new SpriteManager(Content);
-        SpriteManager.AddSprite("FloorOne", "Images/FloorOne");
-    }
-
-    void SecondFloor()
-    {
-        //new SpriteManager(Content);
-        SpriteManager.AddSprite("FloorTwo", "Images/FloorTwo");
-    }
-
-    void FirstDoorLocked()
-    {
-        //new SpriteManager(Content);
-        SpriteManager.AddSprite("DoorOneLocked", "Images/DoorFrameLockedFloorOne-export");
-    }
-
-    void SecondDoorLocked()
-    {
-        //new SpriteManager(Content);
-        SpriteManager.AddSprite("DoorTwoLocked", "Images/DoorFrameLockedFlootTwo");
-    }
-
+    
+    
     void TrashPaper()
     {
-        //new SpriteManager(Content);
+        new SpriteManager(Content);
         SpriteManager.AddSprite("TrashPaper", "Images/Paper");
     }
-
+    
     void RightDoorLocked()
     {
-        //new SpriteManager(Content);
+        new SpriteManager(Content);
         SpriteManager.AddSprite("RightDoorLocked", "Images/DoorFrameLocked");
     }
 
-    // void FloorLevelOne()
-    // {
-    //     new SpriteManager(Content);
-    //     SpriteManager.AddSprite("FloorOne", "Images/FloorOne");
-    // }
-
-    void Pixel()
+    void FloorLevelOne()
     {
-       // new SpriteManager(Content);
-        SpriteManager.AddSprite("pixel", "Images/pixel");
+        new SpriteManager(Content);
+        SpriteManager.AddSprite("FloorOne", "Images/FloorOne");
     }
+    
 
     void PlayerSprite()
     {
         // player
-        //new SpriteManager(Content);
+        new SpriteManager(Content);
         SpriteManager.AddSprite("Abel", "Images/AbelPlayerNew");
     }
 
@@ -213,51 +187,63 @@ public class Game1 : Game
     {
         SpriteManager.AddSprite("AbelRightAnimation", "Images/Right-Animation-Player", 4, 1);
     }
-
     void UiButtonsSprite()
     {
         // ======== UI buttons
         // StartButton 
-        
+        new SpriteManager(Content);
         SpriteManager.AddSprite("StartButton", "UI/StartButton");
-
+        
         // settingsButton
-        //new SpriteManager(Content);
+        new SpriteManager(Content);
         SpriteManager.AddSprite("SettingsButton", "UI/SettingsButton");
-
+        
         // quitButton
-        //new SpriteManager(Content);
+        new SpriteManager(Content);
         SpriteManager.AddSprite("QuitButton", "UI/QuitButtons");
     }
-
+    
     void Start()
     {
         // ===== UI ======
         // Buttons
-
+        
         StartGame();
         SettingsBtttonOnClick();
         QuitGame();
+        
+        // Floor
+        floorOne = new FloorLevelOne();
+        floorOne.Start();
+        
         // Trash
-        notColletiblesPaper = SceneManager.Create<NotColletiblesPaper>();
+        notColletiblesPaper = new NotColletiblesPaper();
+        notColletiblesPaper.Start();
+        
+        // wall
+        //wallLevelFirst = new WallLevelFirst();
+        //wallLevelFirst.Start();
         
         // doors
-        lockedDoor = SceneManager.Create<LockedDoor>();
-
+        lockedDoor = new LockedDoor();
+        lockedDoor.Start();
+        
         // player
-        player = SceneManager.Create<Player>();
-       
-        SceneManager.Instance.Start();
-
+        player = new Player();
+        player.Start();
+        
+        // zombie
+        zombie = new Zombie(player);
+        zombie.Start();
+        zombies.Add(zombie); // add the zombie into the list 
+        sprites.Add(zombie); // add zombie into the sprite list 
+        
         // The list will use sortingOrder to decide what draws first.
-        //sprites.Add(floorOne);
+        sprites.Add(floorOne);
         sprites.Add(notColletiblesPaper);
         //sprites.Add(wallLevelFirst);
         sprites.Add(lockedDoor);
         sprites.Add(player);
-        
-        
-        player.Collider.RegisterOnCollision(player.OnCollisionEnter);
     }
 
     void StartGame()
@@ -273,36 +259,31 @@ public class Game1 : Game
         {
             gameStarted = true;
             IsMouseVisible = false;
-
-            generatedFloor = new Floor(); // creates a new floor
-            generatedFloor.generateFloor(Floor.Difficulty.Easy);
-            sprites.AddRange(generatedFloor.GetRoomSprites());
-
-            // Find the start room and move the player into it!
-            Room startRoom = generatedFloor.GetRoomSprites().OfType<Room>().FirstOrDefault(r => r.isStartRoom);
-            if (startRoom != null)
-            {
-                player.transform.position = startRoom.transform.position;
-            }
         };
     }
-
+    
     void SettingsBtttonOnClick()
     {
         SettingsButton = new Buttons(GraphicsDevice,
             new Rectangle(760, 430, 400, 100));
-
+        
         SettingsButton.SetTexture(SpriteManager.GetSprite("SettingsButton").texture);
 
-        SettingsButton.OnClick += () => { Console.WriteLine("Settings"); };
-
+        SettingsButton.OnClick += () =>
+        {
+            Console.WriteLine("Settings");
+        };
+        
     }
-
+    
     void QuitGame()
     {
         QuitButton = new Buttons(GraphicsDevice, new Rectangle(760, 560, 400, 100));
         QuitButton.SetTexture(SpriteManager.GetSprite("QuitButton").texture);
-        QuitButton.OnClick += () => { Exit(); };
+        QuitButton.OnClick += () =>
+        {
+            Exit();
+        };
     }
 
     protected override void Update(GameTime gameTime)
@@ -311,7 +292,12 @@ public class Game1 : Game
         if (gameStarted)
         {
             player.Update(gameTime);
-            camera.Follow(player.transform.position);
+
+            foreach (Zombie enemy in zombies)
+            {
+                enemy.Update(gameTime);
+            }
+            CheckEnemyPlayerCollisions();
         }
         else
         {
@@ -319,16 +305,13 @@ public class Game1 : Game
             SettingsButton.Update();
             QuitButton.Update();
         }
-
-        SceneManager.Instance.Update(gameTime);
-
+        
         // ======== Esc button ======== (quit the game)
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
-
+        
         inputManager.FullscreenFlip(_graphics);
-
         base.Update(gameTime);
     }
 
@@ -336,40 +319,105 @@ public class Game1 : Game
     {
         GraphicsDevice.Clear(Color.Black);
 
-        // ==========================================
-        // 1. WORLD DRAW (Affected by Camera)
-        // ==========================================
-        // Pass BOTH the samplerState (to stop blur) AND the camera transform!
-        _spriteBatch.Begin(
-            samplerState: SamplerState.PointClamp,
-            transformMatrix: camera.Transform);
-
-        // Draw all the in-game stuff (Room, Player, Enemies)
+        // starting 
+        _spriteBatch.Begin(samplerState: SamplerState.PointClamp); // make monogame not blur and make my pixel art ugly
+        
+        // ============
+        // Texture/Sprite
+        // ============
         foreach (Sprite sprite in sprites.OrderBy(sprite => sprite.sortingOrder))
         {
             sprite.DrawSprite(_spriteBatch);
         }
-
-        _spriteBatch.End();
-
-
-        // ==========================================
-        // 2. UI DRAW (Fixed to the Screen)
-        // ==========================================
-        // Start a brand new batch for UI WITHOUT the camera matrix.
-        // (We keep PointClamp here so your button pixel art stays crisp too).
-        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-
+        
+        // ============
+        // UI - Buttons 
+        // ============
         if (!gameStarted)
         {
             startingButton.Draw(_spriteBatch);
             SettingsButton.Draw(_spriteBatch);
             QuitButton.Draw(_spriteBatch);
         }
+        
+        // ==========
+        // Draw Colliders
+        // ==========
+        if (gameStarted) // if the game is started draw the collider.
+        {
+            DrawCollider(player.Collider, Color.LimeGreen);
 
+            foreach (Zombie enemy in zombies)
+            {
+                if (!enemy.IsDead)
+                {
+                    DrawCollider(enemy.Collider, Color.Red);
+                }
+            }
+        }
+        
+        // ending 
         _spriteBatch.End();
-
+        
+        
+        // TODO: Add your drawing code here
 
         base.Draw(gameTime);
+    }
+
+    private void DrawCollider(Rectangle rectangle, Color color)
+    {
+        int thickness = 3; // this is the thickness of the collider
+        
+        // top collider
+        _spriteBatch.Draw(
+            debugPixel,
+            new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, thickness),
+            color);
+        
+        // Bottom collider
+        _spriteBatch.Draw(
+            debugPixel,
+            new Rectangle(rectangle.X, rectangle.Bottom - thickness, rectangle.Width, thickness),
+            color);
+        
+        // Left collider
+        _spriteBatch.Draw(debugPixel,
+            new Rectangle(rectangle.X ,rectangle.Y ,thickness, rectangle.Height),
+                color);
+        
+        // Right Collider
+        _spriteBatch.Draw(
+            debugPixel,
+            new Rectangle(rectangle.Right -  thickness, rectangle.Y, thickness, rectangle.Height),
+            color);
+        
+    }
+
+    private void ZombieAnimation()
+    {
+        SpriteManager.AddSprite("ZombieFrontAnimation", "Images/Front-Animation-Zombie", 4, 2);
+        SpriteManager.AddSprite("ZombieBackAnimation", "Images/Back-Animation-Zombie", 4, 2);
+        SpriteManager.AddSprite("ZombieLeftAnimation", "Images/Left-Aniamtion-Zombie", 4, 1);
+        SpriteManager.AddSprite("ZombieRightAnimation", "Images/Right-Animation-Zombie", 4, 1);
+    }
+
+    private void CheckEnemyPlayerCollisions()
+    {
+        foreach (Zombie enemy in zombies)
+        {
+            if (enemy.IsDead)
+            {
+                continue;
+            }
+
+            bool isTouchingPlayer = enemy.Collider.Intersects(player.Collider);
+
+            if (isTouchingPlayer)
+            {
+                player.TakeDamage(enemy.ContactDamage);
+                Console.WriteLine($"Player health: {player.Health}");
+            }
+        }
     }
 }
