@@ -21,11 +21,13 @@
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Right-Animation-Player.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Right-Animation-Zombie.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Rock.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/UI/Heart.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/UI/QuitButtons.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/UI/SettingsButton.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/UI/StartButton.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

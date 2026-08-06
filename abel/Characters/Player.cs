@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.Intrinsics.X86;
 using Abel_The_Last_Son.Core.Enums;
+using Abel_The_Last_Son.Weapons;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -25,6 +26,8 @@ public class Player : Sprite , ICollidable, IDamageable
     private float damageCooldownTimer = 0f;
     private const float DamageProtectionTime = 1f;
     public bool CanTakeDamage => damageCooldownTimer <= 0f;
+
+    public event Action Died;
     
     // Player Stats 
 
@@ -38,6 +41,8 @@ public class Player : Sprite , ICollidable, IDamageable
     private SpriteSheet rightAnimation;
     private SpriteSheet leftAnimation;
 
+    // WEAPON
+    public IWeapon Weapon {get; private set;}
 
     public Player() : base("AbelFrontAnimation")
     {
@@ -58,6 +63,9 @@ public class Player : Sprite , ICollidable, IDamageable
         transform.position = Game1._screenCenter; // center the player on the middle screen
         transform.scale = new Vector2(4f, 4f); // player scale
         sortingOrder = 4;
+        
+        // give player his weapon
+        Weapon = new HolyWaterWeapon(10);
     }
 
     public override void Update(GameTime gameTime)
@@ -69,8 +77,11 @@ public class Player : Sprite , ICollidable, IDamageable
             damageCooldownTimer -= deltaTime;
         }
         
+        Weapon.Update(gameTime); //weapon updating in gameTime
+        
         PlayerMovement(gameTime);
         PlayerAnimation(gameTime);
+        
     }
 
 public void PlayerMovement(GameTime gameTime)
@@ -361,6 +372,7 @@ public void PlayerMovement(GameTime gameTime)
         if (Health <= 0)
         {
             Health = 0;
+            //here I want to stop the game 
         }
 
         damageCooldownTimer = DamageProtectionTime; // when take damage start the cooldown protection.
@@ -368,6 +380,8 @@ public void PlayerMovement(GameTime gameTime)
         if (IsDead)
         {
             Console.WriteLine("Player is dead");
+            
+            Died?.Invoke();
         }
     }
 }

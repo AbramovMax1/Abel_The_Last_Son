@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Abel_The_Last_Son.Core.Helpers;
 using Abel_The_Last_Son.Enemies;
 using Abel_The_Last_Son.Manager;
 using Abel_The_Last_Son.World.Doors;
@@ -23,6 +24,12 @@ public class Game1 : Game
 
     private bool gameStarted = false; // game run or not
 
+    private bool gameOver = false;
+
+    // ============
+    // KeyBinds
+    private KeyboardState previousCombatKeyboard;
+    
     // ============
     // Texture
     private Texture2D _logo;
@@ -72,6 +79,9 @@ public class Game1 : Game
     private Zombie zombie;
     private readonly List<Zombie> zombies = new List<Zombie>(); //list of zombies
     
+    // =========
+    // HeartUI
+    private Texture2D heartTexture;
   
     
     public Game1()
@@ -142,10 +152,20 @@ public class Game1 : Game
         //=============
         ZombieAnimation(); // zombie animation
 
+        //=============
+        // Weapons
+        //=============
+        HolyWaterSprite();
+        
+
+        
         Start();
     }
 
-    
+    private void HolyWaterSprite()
+    {
+        SpriteManager.AddSprite("HolyWater", "Images/HollyWater");
+    }
     
     void TrashPaper()
     {
@@ -202,6 +222,13 @@ public class Game1 : Game
         new SpriteManager(Content);
         SpriteManager.AddSprite("QuitButton", "UI/QuitButtons");
     }
+
+    void HeartUI()
+    {
+        SpriteManager.AddSprite("HeartUI", "UI/Heart");
+        heartTexture =
+            SpriteManager.GetSprite("HeartUI").texture;
+    }
     
     void Start()
     {
@@ -211,6 +238,10 @@ public class Game1 : Game
         StartGame();
         SettingsBtttonOnClick();
         QuitGame();
+        
+        //heart
+        HeartUI();
+        //=============
         
         // Floor
         floorOne = new FloorLevelOne();
@@ -231,6 +262,8 @@ public class Game1 : Game
         // player
         player = new Player();
         player.Start();
+
+        player.Died += HandlePlayerDeath;
         
         // zombie
         zombie = new Zombie(player);
@@ -289,17 +322,24 @@ public class Game1 : Game
     protected override void Update(GameTime gameTime)
     {
         // TODO: Add your update logic here
-        if (gameStarted)
+        if (gameStarted && !gameOver)
         {
             player.Update(gameTime);
-
+            
+            HandlePlayerAttack();
+            
             foreach (Zombie enemy in zombies)
             {
                 enemy.Update(gameTime);
             }
+            
+            CheckProjectileEnemyCollisions();
+            
+            RemoveDeadZombies();
+            
             CheckEnemyPlayerCollisions();
         }
-        else
+        else if (!gameStarted)
         {
             startingButton.Update();
             SettingsButton.Update();
@@ -309,7 +349,10 @@ public class Game1 : Game
         // ======== Esc button ======== (quit the game)
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
+        {
             Exit();
+        }
+
         
         inputManager.FullscreenFlip(_graphics);
         base.Update(gameTime);
@@ -354,6 +397,16 @@ public class Game1 : Game
                     DrawCollider(enemy.Collider, Color.Red);
                 }
             }
+            
+            DrawWeaponProjectiles();
+            
+            IReadOnlyList<IProjectile> projectiles = player.Weapon.Projectiles;
+            for (int i = 0; i < projectiles.Count; i++)
+            {
+                DrawCollider(projectiles[i].Collider, Color.Cyan);
+            }
+            
+            DrawPlayerHealth();
         }
         
         // ending 
@@ -419,5 +472,112 @@ public class Game1 : Game
                 Console.WriteLine($"Player health: {player.Health}");
             }
         }
+    }
+
+    private void HandlePlayerAttack()
+    {
+        KeyboardState keyboard =  Keyboard.GetState();
+        
+        bool spaceWasPressed = keyboard.IsKeyDown(Keys.Space) && previousCombatKeyboard.IsKeyUp(Keys.Space);
+
+        if (spaceWasPressed)
+        {
+            Vector2 shootingDirection = DirectionHelper.ToVector(player.FacingDirection);
+
+            bool shotWasCreated = player.Weapon.TryAttack(player.transform.position, shootingDirection);
+
+            if (!shotWasCreated)
+            {
+                Console.WriteLine("Holy water could not fire");
+            }
+        }
+        previousCombatKeyboard = keyboard;
+    }
+
+    private void DrawWeaponProjectiles()
+    {
+        IReadOnlyList<IProjectile> projectiles = player.Weapon.Projectiles;
+
+        for (int i = 0; i < projectiles.Count; i++)
+        {
+            if (!projectiles[i].IsActive)
+            {
+                continue;
+            }
+            projectiles[i].DrawSprite(_spriteBatch);
+        }
+    }
+
+    private void CheckProjectileEnemyCollisions()
+    {
+        IReadOnlyList<IProjectile> projectiles = player.Weapon.Projectiles;
+
+        for (int projectileIndex = 0; projectileIndex < projectiles.Count; projectileIndex++)
+        {
+            IProjectile projectile = projectiles[projectileIndex];
+
+            if (!projectile.IsActive)
+            {
+                continue;
+            }
+
+            for (int enemyIndex = 0; enemyIndex < zombies.Count; enemyIndex++)
+            {
+                Zombie enemy = zombies[enemyIndex];
+
+                if (enemy.IsDead)
+                {
+                    continue;
+                }
+                
+                bool hitEnemy = projectile.Collider.Intersects(enemy.Collider);
+
+                if (hitEnemy)
+                {
+                    enemy.TakeDamage(projectile.Damage);
+                    projectile.Destroy();
+                    break;
+                }
+            }
+        }
+    }
+
+    private void RemoveDeadZombies()
+    {
+        int lastIndex = zombies.Count - 1;
+
+        for (int i = lastIndex; i >= 0; i--)
+        {
+            if (zombies[i].IsDead)
+            {
+                sprites.Remove(zombies[i]);
+                
+                zombies.RemoveAt(i);
+            }
+        }
+    }
+
+    private void DrawPlayerHealth()
+    {
+        for (int i = 0; i < player.Health; i++)
+        {
+            int x = 30 + i * 70;
+            int y = 30;
+
+            int size = 64;
+            
+            Rectangle heartRectangle = new Rectangle(x, y, size, size);
+            
+            _spriteBatch.Draw(heartTexture, heartRectangle, Color.White);
+        }
+
+        
+    }
+
+    private void HandlePlayerDeath()
+    {
+        gameOver = true;
+        IsMouseVisible = true;
+        Console.WriteLine("Game Over");
     }
 }
