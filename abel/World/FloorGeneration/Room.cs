@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Abel_The_Last_Son;
-using Abel_The_Last_Son.Core.Collider;
+using Abel_The_Last_Son.Core.Enums;
 using Abel_The_Last_Son.Manager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,11 +25,6 @@ public class Room : Sprite
     private string doorSpriteName;
     private string lockedDoorSpriteName;
 
-    // wall colliders
-    private List<Collider> wallColliders = new List<Collider>();
-
-    // wall sprites
-    private List<Sprite> wallSprites = new List<Sprite>();
 
     private const int scale = 15;
 
@@ -39,14 +34,7 @@ public class Room : Sprite
         EndRoom
     }
 
-    public enum Direction
-    {
-        Up,
-        Down,
-        Left,
-        Right,
-        None
-    }
+   
     
     public Direction entranceDoorDirection { get; private set; }
 
@@ -122,173 +110,121 @@ public class Room : Sprite
 
     }
     
-    public List<Collider> GetWallColliders()
-    {
-        return wallColliders;
-    }
+    public List<Rectangle> WallColliders { get; private set; } = new List<Rectangle>();
+    //{
+      //  return wallColliders;
+    //}
     
 
     public void CreateWallsAndDoors()
+{
+    int wallThickness = (int)(12 * scale);
+    int doorSize = (int)(12 * scale);
+
+    float roomXPosition = transform.position.X - ((texture.Width * 0.5f) * scale);
+    float roomYPosition = transform.position.Y - ((texture.Height * 0.5f) * scale);
+    
+    float roomWidth = texture.Width * scale;
+    float roomHight = texture.Height * scale;
+
+    float halfGap = doorSize * 0.5f;
+
+    // ==========================================
+    // 0. UP WALL
+    // ==========================================
+    if (doors[0] != null)
     {
-        int wallThickness = (int)(12 * scale); // wall thickness modifier
-        int doorSize = (int)(12 * scale);
+        float doorX = roomXPosition + (roomWidth * 0.5f);
+        float doorY = roomYPosition + (wallThickness * 0.5f);
+        doors[0].transform.position = new Vector2(doorX, doorY);
+        doors[0].transform.rotation = 0.0f;
 
-        float roomXPosition = transform.position.X - ((texture.Width * 0.5f) * scale);
-        float roomYPosition = transform.position.Y - ((texture.Height * 0.5f) * scale);
-        
-        float roomWidth = texture.Width * scale;
-        float roomHight = texture.Height * scale;
-
-        // up wall
-        if (doors[0] != null)
-        {
-            float doorXPosition =
-                roomXPosition + (roomWidth * 0.5f) - (doorSize * 0.5f); // find the middle of the wall to plant the door
-            doors[0].transform.position = new Vector2(doorXPosition, roomYPosition); // plant the door there
-            doors[0].transform.rotation = 0.0f;
-
-            // creates a wall to the left of the door
-            CreateWallSegment(roomXPosition, roomYPosition, (roomWidth * 0.5f) - (doorSize * 0.5f), wallThickness);
-            // creates a wall to the right of the door
-            CreateWallSegment(doorXPosition + doorSize, roomYPosition, (roomWidth * 0.5f) - (doorSize * 0.5f),
-                wallThickness);
-        }
-        else
-        {
-            CreateWallSegment(roomXPosition, roomYPosition, roomWidth, wallThickness);
-        }
-
-        // ==========================================
-        // 1. RIGHT WALL (Right Edge)
-        // ==========================================
-        if (doors[1] != null)
-        {
-            float doorYPosition = roomYPosition + (roomHight * 0.5f) - (doorSize * 0.5f);
-
-            doors[1].transform.position = new Vector2(roomXPosition + roomWidth - wallThickness, doorYPosition);
-            doors[1].transform.rotation = MathHelper.ToRadians(90);
-
-            // Split Wall: Top piece
-            CreateWallSegment(roomXPosition + roomWidth - wallThickness, roomYPosition, wallThickness,
-                (roomHight * 0.5f) - (doorSize * 0.5f));
-            // Split Wall: Bottom piece
-            CreateWallSegment(roomXPosition + roomWidth - wallThickness, doorYPosition + doorSize, wallThickness,
-                (roomHight * 0.5f) - (doorSize * 0.5f));
-        }
-        else
-        {
-            CreateWallSegment(roomXPosition + roomWidth - wallThickness, roomYPosition, wallThickness, roomHight);
-        }
-
-        // ==========================================
-        // 2. DOWN WALL (Bottom Edge)
-        // ==========================================
-        if (doors[2] != null)
-        {
-            float doorX = roomXPosition + (roomWidth * 0.5f) - (doorSize * 0.5f);
-
-            doors[2].transform.position = new Vector2(doorX, roomYPosition + roomHight - wallThickness);
-            doors[2].transform.rotation = MathHelper.ToRadians(180);
-
-            // Split Wall: Left piece
-            CreateWallSegment(roomXPosition, roomYPosition + roomHight - wallThickness,
-                (roomWidth * 0.5f) - (doorSize * 0.5f), wallThickness);
-            // Split Wall: Right piece
-            CreateWallSegment(doorX + doorSize, roomYPosition + roomHight - wallThickness,
-                (roomWidth * 0.5f) - (doorSize * 0.5f), wallThickness);
-        }
-        else
-        {
-            CreateWallSegment(roomXPosition, roomYPosition + roomHight - wallThickness, roomWidth, wallThickness);
-        }
-
-        // ==========================================
-        // 3. LEFT WALL (Left Edge)
-        // ==========================================
-        if (doors[3] != null)
-        {
-            float doorY = roomYPosition + (roomHight * 0.5f) - (doorSize * 0.5f);
-
-            doors[3].transform.position = new Vector2(roomXPosition, doorY);
-            doors[3].transform.rotation = MathHelper.ToRadians(270);
-
-            // Split Wall: Top piece
-            CreateWallSegment(roomXPosition, roomYPosition, wallThickness, (roomHight * 0.5f) - (doorSize * 0.5f));
-            // Split Wall: Bottom piece
-            CreateWallSegment(roomXPosition, doorY + doorSize, wallThickness, (roomHight * 0.5f) - (doorSize * 0.5f));
-        }
-        else
-        {
-            CreateWallSegment(roomXPosition, roomYPosition, wallThickness, roomHight);
-        }
-
+        float segmentWidth = (roomWidth * 0.5f) - halfGap;
+        CreateWallSegment(roomXPosition, roomYPosition, segmentWidth, wallThickness);
+        CreateWallSegment(doorX + halfGap, roomYPosition, segmentWidth, wallThickness);
+    }
+    else
+    {
+        CreateWallSegment(roomXPosition, roomYPosition, roomWidth, wallThickness);
     }
 
+    // ==========================================
+    // 1. RIGHT WALL
+    // ==========================================
+    if (doors[1] != null)
+    {
+        float doorX = roomXPosition + roomWidth - (wallThickness * 0.5f) ;
+        float doorY = roomYPosition + (roomHight * 0.5f);
+        doors[1].transform.position = new Vector2(doorX, doorY);
+        doors[1].transform.rotation = MathHelper.ToRadians(90);
+
+        float segmentHeight = (roomHight * 0.5f) - halfGap;
+        CreateWallSegment(roomXPosition + roomWidth - wallThickness, roomYPosition, wallThickness, segmentHeight);
+        CreateWallSegment(roomXPosition + roomWidth - wallThickness, doorY + halfGap, wallThickness, segmentHeight);
+    }
+    else
+    {
+        CreateWallSegment(roomXPosition + roomWidth - wallThickness, roomYPosition, wallThickness, roomHight);
+    }
+
+    // ==========================================
+    // 2. DOWN WALL
+    // ==========================================
+    if (doors[2] != null)
+    {
+        float doorX = roomXPosition + (roomWidth * 0.5f);
+        float doorY = roomYPosition + roomHight - (wallThickness * 0.5f);
+        doors[2].transform.position = new Vector2(doorX, doorY);
+        doors[2].transform.rotation = MathHelper.ToRadians(180);
+
+        float segmentWidth = (roomWidth * 0.5f) - halfGap;
+        CreateWallSegment(roomXPosition, roomYPosition + roomHight - wallThickness, segmentWidth, wallThickness);
+        CreateWallSegment(doorX + halfGap, roomYPosition + roomHight - wallThickness, segmentWidth, wallThickness);
+    }
+    else
+    {
+        CreateWallSegment(roomXPosition, roomYPosition + roomHight - wallThickness, roomWidth, wallThickness);
+    }
+
+    // ==========================================
+    // 3. LEFT WALL
+    // ==========================================
+    if (doors[3] != null)
+    {
+        float doorX = roomXPosition + (wallThickness * 0.5f);
+        float doorY = roomYPosition + (roomHight * 0.5f);
+        doors[3].transform.position = new Vector2(doorX, doorY);
+        doors[3].transform.rotation = MathHelper.ToRadians(270);
+
+        float segmentHeight = (roomHight * 0.5f) - halfGap;
+        CreateWallSegment(roomXPosition, roomYPosition, wallThickness, segmentHeight);
+        CreateWallSegment(roomXPosition, doorY + halfGap, wallThickness, segmentHeight);
+    }
+    else
+    {
+        CreateWallSegment(roomXPosition, roomYPosition, wallThickness, roomHight);
+    }
+}
     // A helper method to keep the code above clean
     private void CreateWallSegment(float xPosition, float yPosition, float width, float height)
     {
-        Sprite wallSprite = new Sprite("pixel");
-        wallSprite.Start();
-        
-        
-        wallSprite.color = Color.Transparent;
-        
-        wallSprite.transform.position = new Vector2(
-            xPosition + (width * 0.5f), 
-            yPosition + (height * 0.5f));
-            
-        wallSprite.transform.scale = new Vector2(width, height);
-
-        Collider wallCollider = new Collider();
-        wallCollider.Parent = wallSprite;
-        wallCollider.IsTrigger = false;
-
-        wallSprites.Add(wallSprite);
-        wallColliders.Add(wallCollider);
-    }   
-
-    public Room GetRoom()
-    {
-        return this;
+        // Just create the Rectangle collider and add it to the list.
+        Rectangle wallRect = new Rectangle((int)xPosition, (int)yPosition, (int)width, (int)height);
+        WallColliders.Add(wallRect);
     }
-
-    public Room GetRoomInDirection(int direction)
-    {
-        Room desierdedRoom = null;
-        switch (direction)
-        {
-            case 0:
-            {
-                
-                break;
-            }
-            case 1:
-            {
-                break;
-            }
-            case 2:
-            {
-                break;
-            }
-            case 3:
-            {
-                break;
-            }
-        }
-        return desierdedRoom;
-    }
+    
     public void AddDoor(Direction direction, bool doorExist)
     {
         if (!doorExist) return;
         if (isStartRoom)
         {
-            SceneManager.Create<Door(direction, doorSpriteName, true)r>()
             doors[DirectionToNumber(direction)] = new Door(direction, doorSpriteName, true);
         }
         else
         {
             doors[DirectionToNumber(direction)] = new Door(direction, doorSpriteName, false);
         }
+        doors[DirectionToNumber(direction)].Start();
     }
 
     public void ChangeRoomType(RoomType newRoomType)
@@ -347,30 +283,28 @@ public class Room : Sprite
 
     public override void DrawSprite(SpriteBatch spriteBatch)
     {
-        
         base.DrawSprite(spriteBatch);
         
-        foreach (var wallSprite in wallSprites)
+        
+        foreach (Door door in doors)
         {
-            wallSprite.DrawSprite(spriteBatch);
+            if (door == null || door.texture == null) continue; 
+
+            // Calculate the center of the texture so it rotates properly
+            Vector2 origin = new Vector2(door.texture.Width / 2f, door.texture.Height / 2f);
+            Console.WriteLine(door.transform.position);
+            // Draw using position, rotation, origin, and scale!
+            spriteBatch.Draw(
+                door.texture,
+                door.transform.position,
+                null, // draw the whole texture
+                Color.White,
+                door.transform.rotation, // Your 90/180/270 degree rotations
+                origin, // Center point
+                door.transform.scale, // Your Vector2(6f, 6f)
+                SpriteEffects.None,
+                0f
+            );
         }
-        
-        foreach (var door in doors)
-        {
-            if (door != null)
-            {
-                door.DrawSprite(spriteBatch);
-            }
-        }
-        
-#if DEBUG
-        
-        // Loop through the list to draw every wall piece, no matter how many there are
-        foreach (var wallCollider in wallColliders)
-        {
-            wallCollider.DrawSprite(spriteBatch);
-        }
-        
-#endif
     }
 }

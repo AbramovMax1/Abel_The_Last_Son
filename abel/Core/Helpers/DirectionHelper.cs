@@ -11,8 +11,8 @@ public static class DirectionHelper
         {
             Direction.Right => new Vector2(1f, 0f),
             Direction.Left => new Vector2(-1f, 0f),
-            Direction.Front => new Vector2(0f, 1f),
-            Direction.Back => new Vector2(0f, -1f),
+            Direction.Up => new Vector2(0f, 1f),
+            Direction.Down => new Vector2(0f, -1f),
 
             _ => Vector2.Zero
         };

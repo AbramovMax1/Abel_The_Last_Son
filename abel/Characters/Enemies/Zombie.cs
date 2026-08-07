@@ -17,7 +17,7 @@ public class Zombie : Sprite , IEnemy
     private float animationTimer = 0f;
     private const float AnimationSpeed = 0.12f;
     private const float MovementSpeed = 110f;
-    private Direction facingDirection = Direction.Front;
+    private Direction facingDirection = Direction.Down;
     
     // Zombie stats
     public int MaxHealth { get; } = 3;
@@ -131,13 +131,13 @@ public class Zombie : Sprite , IEnemy
         {
             if (movement.Y > 0f)
             {
-                facingDirection = Direction.Front;
+                facingDirection = Direction.Down;
                 ChangeAnimation(frontAniamtion);
                 
             }
             else
             {
-                facingDirection = Direction.Back;
+                facingDirection = Direction.Up;
                 ChangeAnimation(backAniamtion);
             }
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Numerics;
+using Abel_The_Last_Son.Core.Enums;
 
 namespace Abel_The_Last_Son;
 
@@ -40,7 +41,7 @@ public class Floor
 
             // generate the first room 
             roomQueue.Enqueue(roomArray[collumns / 2, rows / 2] =
-                new Room("FloorOne", difficulty, rows / 2, collumns / 2,grideCenter , Room.Direction.None, true, true));
+                new Room("FloorOne", difficulty, rows / 2, collumns / 2,grideCenter , Direction.None, true, true));
             Room currentRoom = null;
             dequeueRoom = true;
 
@@ -201,7 +202,7 @@ public class Floor
 
                         // Create the matching opposite door on the existing room to close the loop 
                         int oppositeDirection = (direction + 2) % 4;
-                        adjacentRoom.AddDoor(TransferIntToDirection(direction), true);
+                        adjacentRoom.AddDoor(TransferIntToDirection(oppositeDirection), true);
 
                         continue; // Skip creating a new room since it's already there 
                     }
@@ -302,7 +303,6 @@ public class Floor
         return this;
     }
 
-
     private void DirectionConvertor(int direction, Room currentRoom, out int row, out int collumn) // direction calculations
     {
         
@@ -371,21 +371,31 @@ public class Floor
 
         gridCenter = grideCenter;
     }
+        
+    public Room GetRoomAt(int col, int row)
+    {
+        // Check if the requested grid coordinates are inside the array boundaries
+        if (col >= 0 && col < collumns && row >= 0 && row < rows)
+        {
+            return roomArray[col, row];
+        }
+        return null; // Room does not exist here
+    }
 
-    public Room.Direction TransferIntToDirection(int direction)
+    public Direction TransferIntToDirection(int direction)
     {
         switch (direction)
         {
             case 0:
-                return Room.Direction.Up;
+                return Direction.Up;
             case 1:
-                return Room.Direction.Right;
+                return Direction.Right;
             case 2:
-                return Room.Direction.Down;
+                return Direction.Down;
             case 3:
-                return Room.Direction.Left;
+                return Direction.Left;
         }
-        return  Room.Direction.None;
+        return  Direction.None;
     }
 
     public void PrintRoomArray() // prints the room to the  consule for testing

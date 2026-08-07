@@ -1,16 +1,15 @@
 using System.Collections.Generic;
-using Abel_The_Last_Son.Core.Collider;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Abel_The_Last_Son.Manager;
 
 
-public class SceneManager : IUpdateable, IDrawable
+public class SceneManager : IUpdateable, IDrawable, ICollidable
 {
     private static List<IUpdateable> _updatables = new();
     private static List<IDrawable> _drawables = new();
-    private static List<Collider> _colliders = new();
+    private static List<ICollidable> _colliders = new();
 
     private static SceneManager instance = null;
 
@@ -24,7 +23,7 @@ public class SceneManager : IUpdateable, IDrawable
         {
             _drawables.Add(drawable);
         }
-        if (obj is Collider collider)
+        if (obj is ICollidable collider)
         {
             _colliders.Add(collider);
         }
@@ -44,7 +43,7 @@ public class SceneManager : IUpdateable, IDrawable
             _drawables.Add(drawable);
         }
         
-        if (obj is Collider collider)
+        if (obj is ICollidable collider)
         {
             _colliders.Add(collider);
         }
@@ -62,7 +61,7 @@ public class SceneManager : IUpdateable, IDrawable
         {
             _drawables.Remove(drawable);
         }
-        if (obj is Collider collider)
+        if (obj is ICollidable collider)
         {
             _colliders.Remove(collider);
         }
@@ -95,18 +94,7 @@ public class SceneManager : IUpdateable, IDrawable
 
     public void HandleCollisions()
     {
-        for (int i = 0; i < _colliders.Count; i++)
-        {
-            Collider currentCollider = _colliders[i];
-
-            for (int j = 0; j < _colliders.Count; j++)
-            {
-                Collider otherCollider = _colliders[j];
-                
-                if (i != j && currentCollider.IsInterset(otherCollider))
-                    currentCollider.Notify(otherCollider);
-            }
-        }
+        
     }
 
     public void DrawSprite(SpriteBatch spriteBatch)
@@ -114,4 +102,8 @@ public class SceneManager : IUpdateable, IDrawable
         _drawables.ForEach(drawable => drawable.DrawSprite(spriteBatch));
     }
 
+    public Rectangle Collider
+    {
+        get;
+    }
 }

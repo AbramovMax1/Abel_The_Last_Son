@@ -22,6 +22,13 @@ public class Game1 : Game
     private SpriteBatch _spriteBatch;
     private InputManager inputManager;
 
+    //  =========== Floor & Rooms =========== 
+    private Room activeRoom = null;
+    private Floor currentFloor;
+    
+    
+    private Camera camera;
+
     private bool gameStarted = false; // game run or not
 
     private bool gameOver = false;
@@ -115,8 +122,14 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+        new SpriteManager(Content);
+        
+        
 
         // TODO: use this.Content to load your game content here
+        
+        // Load Camera
+        camera = new Camera(GraphicsDevice.Viewport);
 
         // ============
         // Texture/Sprite
@@ -133,6 +146,9 @@ public class Game1 : Game
         
         // doors
         RightDoorLocked();
+        SpriteManager.AddSprite("DoorOneLocked", "Images/DoorFrameLockedFloorOne-export");
+        SpriteManager.AddSprite("DoorTwoLocked", "Images/DoorFrameLockedFlootTwo");
+        
         
         // Characters
         PlayerSprite(); // player sprite
@@ -169,27 +185,22 @@ public class Game1 : Game
     
     void TrashPaper()
     {
-        new SpriteManager(Content);
         SpriteManager.AddSprite("TrashPaper", "Images/Paper");
     }
     
     void RightDoorLocked()
     {
-        new SpriteManager(Content);
         SpriteManager.AddSprite("RightDoorLocked", "Images/DoorFrameLocked");
     }
 
     void FloorLevelOne()
     {
-        new SpriteManager(Content);
         SpriteManager.AddSprite("FloorOne", "Images/FloorOne");
     }
     
 
     void PlayerSprite()
     {
-        // player
-        new SpriteManager(Content);
         SpriteManager.AddSprite("Abel", "Images/AbelPlayerNew");
     }
 
@@ -292,6 +303,33 @@ public class Game1 : Game
         {
             gameStarted = true;
             IsMouseVisible = false;
+
+            currentFloor = new Floor();
+            currentFloor.generateFloor(Floor.Difficulty.Easy);
+            
+            // Loop through all the rooms the floor just generated
+            foreach (Sprite sprite in currentFloor.GetRoomSprites())
+            {
+                // 1. ADD THE ROOM TO THE DRAW LIST!
+                sprites.Add(sprite);
+
+                // 2. Find the starting room
+                if (sprite is Room room && room.isStartRoom)
+                {
+                    activeRoom = room;
+                    // Note: We removed the "break;" here so the loop 
+                    // continues and adds ALL the rooms to the sprites list!
+                }
+            }
+
+            if (activeRoom != null)
+            {
+                // Center player in the starting room
+                player.transform.position = activeRoom.transform.position;
+                
+                // Snap the camera directly to the starting room 
+                camera.Position = activeRoom.transform.position;
+            }
         };
     }
     
@@ -322,8 +360,19 @@ public class Game1 : Game
     protected override void Update(GameTime gameTime)
     {
         // TODO: Add your update logic here
+        
         if (gameStarted && !gameOver)
         {
+            // 1. Pass the active room's walls to the player so they can slide against them
+            if (activeRoom != null)
+            {
+                Console.WriteLine(player.transform.position +" "+ activeRoom.transform.position);
+                player.CurrentWalls = activeRoom.WallColliders;
+            }
+
+            // 2. Check for door transitions
+            CheckRoomTransitions();
+                
             player.Update(gameTime);
             
             HandlePlayerAttack();
@@ -362,32 +411,23 @@ public class Game1 : Game
     {
         GraphicsDevice.Clear(Color.Black);
 
-        // starting 
-        _spriteBatch.Begin(samplerState: SamplerState.PointClamp); // make monogame not blur and make my pixel art ugly
+        // ==========================================
+        // 1. DRAW WORLD (Moves with the Camera)
+        // ==========================================
         
-        // ============
+        // Notice we added 'transformMatrix: camera.Transform' here!
+        _spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: camera.Transform); 
+        
         // Texture/Sprite
-        // ============
         foreach (Sprite sprite in sprites.OrderBy(sprite => sprite.sortingOrder))
         {
             sprite.DrawSprite(_spriteBatch);
         }
         
-        // ============
-        // UI - Buttons 
-        // ============
-        if (!gameStarted)
+        // Draw World Colliders and Projectiles
+        if (gameStarted) 
         {
-            startingButton.Draw(_spriteBatch);
-            SettingsButton.Draw(_spriteBatch);
-            QuitButton.Draw(_spriteBatch);
-        }
-        
-        // ==========
-        // Draw Colliders
-        // ==========
-        if (gameStarted) // if the game is started draw the collider.
-        {
+            
             DrawCollider(player.Collider, Color.LimeGreen);
 
             foreach (Zombie enemy in zombies)
@@ -405,15 +445,30 @@ public class Game1 : Game
             {
                 DrawCollider(projectiles[i].Collider, Color.Cyan);
             }
-            
+        }
+        
+        _spriteBatch.End();
+
+
+        // ==========================================
+        // 2. DRAW UI (Stays fixed to the screen)
+        // ==========================================
+        
+        // No camera transform here, so UI stays glued to the monitor
+        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        
+        if (!gameStarted)
+        {
+            startingButton.Draw(_spriteBatch);
+            SettingsButton.Draw(_spriteBatch);
+            QuitButton.Draw(_spriteBatch);
+        }
+        else
+        {
             DrawPlayerHealth();
         }
         
-        // ending 
         _spriteBatch.End();
-        
-        
-        // TODO: Add your drawing code here
 
         base.Draw(gameTime);
     }
@@ -445,6 +500,72 @@ public class Game1 : Game
             new Rectangle(rectangle.Right -  thickness, rectangle.Y, thickness, rectangle.Height),
             color);
         
+    }
+    
+    private void CheckRoomTransitions()
+    {
+        if (activeRoom == null) return;
+
+        // Loop through all 4 doors of the current room
+        for (int i = 0; i < 4; i++)
+        {
+            Door door = activeRoom.doors[i];
+            
+            // Check if door exists, is open (or unlocked), and touches player
+            // You can add `&& door.open` if you want to ensure locked doors don't trigger!
+            if (door != null && door.Collider.Intersects(player.Collider)) 
+            {
+                int nextCol = activeRoom.collumn;
+                int nextRow = activeRoom.row;
+                int oppositeDoorIndex = 0;
+                Vector2 spawnOffset = Vector2.Zero;
+
+                // Figure out which way we are going on the grid based on the door hit
+                switch (i)
+                {
+                    case 0: // Went UP
+                        nextRow += 1;
+                        oppositeDoorIndex = 2; // Arrive at DOWN door
+                        spawnOffset = new Vector2(0, -250); // Push slightly UP into the room
+                        break;
+                    case 1: // Went RIGHT
+                        nextCol += 1;
+                        oppositeDoorIndex = 3; // Arrive at LEFT door
+                        spawnOffset = new Vector2(250, 0); // Push slightly RIGHT into the room
+                        break;
+                    case 2: // Went DOWN
+                        nextRow -= 1;
+                        oppositeDoorIndex = 0; // Arrive at UP door
+                        spawnOffset = new Vector2(0, 250); // Push slightly DOWN into the room
+                        break;
+                    case 3: // Went LEFT
+                        nextCol -= 1;
+                        oppositeDoorIndex = 1; // Arrive at RIGHT door
+                        spawnOffset = new Vector2(-250, 0); // Push slightly LEFT into the room
+                        break;
+                }
+
+                // Get the next room from the floor array
+                Room nextRoom = currentFloor.GetRoomAt(nextCol, nextRow);
+
+                if (nextRoom != null)
+                {
+                    // Update active room
+                    activeRoom = nextRoom;
+
+                    // Move player to the new door and apply the offset so they aren't stuck inside the door trigger!
+                    Door arrivalDoor = activeRoom.doors[oppositeDoorIndex];
+                    if (arrivalDoor != null)
+                    {
+                        player.transform.position = arrivalDoor.transform.position + spawnOffset;
+                    }
+
+                    // Move the Camera to center on the new room!
+                    camera.Position = activeRoom.transform.position;
+                    break;
+                }
+            }
+        }
     }
 
     private void ZombieAnimation()

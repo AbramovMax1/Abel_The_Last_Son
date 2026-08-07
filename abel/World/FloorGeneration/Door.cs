@@ -1,6 +1,6 @@
 ﻿using System;
 using Abel_The_Last_Son;
-using Abel_The_Last_Son.Core.Collider;
+using Abel_The_Last_Son.Core.Enums;
 using Abel_The_Last_Son.World.Doors;
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
@@ -17,22 +17,22 @@ namespace Abel_The_Last_Son;
  */
 
 
-public class Door : Sprite
+public class Door : Sprite, ICollidable
 {
     public int position { get; private set; }
     private bool open;
     private bool locked;
-    private Room.Direction direction;
+    private Direction direction;
     
-    public Collider doorCollider;
-
-    public Door(Room.Direction direction , string doorSpriteName, bool open ) : base(doorSpriteName)
+    public Door(Direction direction , string doorSpriteName, bool open ) : base(doorSpriteName)
     {
-        this.position = position;
         this.open = open;
         this.direction = direction;
 
-        if (doorSpriteName == "DoorFrameLockedFlootTwo") transform.rotation -= MathHelper.ToRadians(90);
+        float scale = 10f;
+        transform.scale = new Vector2(scale, scale);
+
+        if (doorSpriteName == "DoorTwoLocked") transform.rotation -= MathHelper.ToRadians(90);
         
         HandleRotation();
     }
@@ -41,29 +41,8 @@ public class Door : Sprite
     {
         base.Start();
         
-        // Set up the trigger collider
-        doorCollider = new Collider();
-        doorCollider.Parent = this; 
-        doorCollider.IsTrigger = true; // Make it a trigger to detect room transitions!
-        // Register the transition logic
-        doorCollider.RegisterOnTrigger(OnPlayerEnterDoor);
-        
     }
     
-    private void OnPlayerEnterDoor(Collider door, Collider other)
-    {
-        if (open)
-        {
-            // TODO: trigger room transition logic
-        }
-
-        if (locked)
-        {
-            //TODO: take key logic
-            Open();
-        }
-    }
-
     public void Open()
     {
         open = true;
@@ -76,27 +55,56 @@ public class Door : Sprite
     
     void HandleRotation()
     {
+        // Start with a much smaller number. Tweak this up or down by 10s until it perfectly fits the wall.
+       
         switch (direction)
         {
-            case Room.Direction.Up:
+            case Direction.Up:
             {
                 break;
             }
-            case Room.Direction.Right:
+            case Direction.Right:
             {
                 transform.rotation += MathHelper.ToRadians(90);
                 break;
             }
-            case Room.Direction.Down:
-            {
+            case Direction.Down:
+            { 
                 transform.rotation += MathHelper.ToRadians(180);
                 break;
             }
-            case Room.Direction.Left:
+            case Direction.Left:
             { 
                 transform.rotation += MathHelper.ToRadians(270);
                 break;
             }
+        }
+    }
+
+
+    public Rectangle Collider
+    {
+        get
+        {
+            if (texture == null) return Rectangle.Empty;
+
+            float width = texture.Width * transform.scale.X;
+            float height = texture.Height * transform.scale.Y;
+
+            // Swap dimensions if door is rotated sideways (90 or 270 deg)
+            int degrees = (int)Math.Abs(MathHelper.ToDegrees(transform.rotation)) % 360;
+            if (degrees == 90 || degrees == 270)
+            {
+                (width, height) = (height, width);
+            }
+
+            // Center rectangle around transform.position
+            return new Rectangle(
+                (int)(transform.position.X - (width * 0.5f)),
+                (int)(transform.position.Y - (height * 0.5f)),
+                (int)width,
+                (int)height
+            );
         }
     }
 }

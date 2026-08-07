@@ -89,7 +89,7 @@ public class Sprite : IUpdateable, IDrawable
     }
 
     // Draw this sprite using MonoGame's SpriteBatch.
-    public void DrawSprite(SpriteBatch spriteBatch)
+    public virtual void DrawSprite(SpriteBatch spriteBatch)
     {
         // Recalculate the destination rectangle.
         destinationRectangle =
