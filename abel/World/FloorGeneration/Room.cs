@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Abel_The_Last_Son;
 using Abel_The_Last_Son.Core.Enums;
+using Abel_The_Last_Son.Enemies;
 using Abel_The_Last_Son.Manager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +21,9 @@ public class Room : Sprite
     public List<Door> doors = new List<Door>(4);
     public List<bool> doorGenerationAttempt = new List<bool>(4);
     public bool isStartRoom { get; private set; }
+    public List<Zombie> enemyList {get; private set;}
+    
+    public Player currentPlayer;
 
     // door sprite
     private string doorSpriteName;
@@ -55,12 +59,15 @@ public class Room : Sprite
     }
 
 
-    public Room(string spriteName, Floor.Difficulty difficulty, int currentRow, int currentCullumn, Vector2 grideSecnter ,
+    public Room(Player player, string spriteName, Floor.Difficulty difficulty, int currentRow, int currentCullumn, Vector2 grideSecnter ,
        Direction entranceDoorDirection = Direction.None, bool isStartRoom = false, bool isCurrentRoom = false) : base(spriteName)
     {
+        currentPlayer = player;
         currentRoom = RoomType.bacicRoom;
         collumn = currentCullumn;
         row = currentRow;
+
+        enemyList = new List<Zombie>();
         
         transform.scale = new Vector2(scale,scale); // make room size up to regular scale
         Start();
@@ -100,7 +107,7 @@ public class Room : Sprite
             AddDoor(entranceDoorDirection, true);
             doorGenerationAttempt[(int)entranceDoorDirection] = true;
 
-
+            enemyList = ChoosZombiesSpawnPositions();
             //generate enemy's
         }
         else
@@ -111,10 +118,6 @@ public class Room : Sprite
     }
     
     public List<Rectangle> WallColliders { get; private set; } = new List<Rectangle>();
-    //{
-      //  return wallColliders;
-    //}
-    
 
     public void CreateWallsAndDoors()
 {
@@ -205,6 +208,7 @@ public class Room : Sprite
         CreateWallSegment(roomXPosition, roomYPosition, wallThickness, roomHight);
     }
 }
+    
     // A helper method to keep the code above clean
     private void CreateWallSegment(float xPosition, float yPosition, float width, float height)
     {
@@ -279,6 +283,17 @@ public class Room : Sprite
          default:
              return -1;
         }
+    }
+
+    List<Zombie> ChoosZombiesSpawnPositions()
+    {
+        List<Zombie> tempList = new();
+        
+        Zombie zombie = new Zombie(currentPlayer);
+        zombie.Start();
+        zombie.transform.position = transform.position;
+        tempList.Add(zombie);
+        return tempList;
     }
 
     public override void DrawSprite(SpriteBatch spriteBatch)

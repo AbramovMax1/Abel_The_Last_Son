@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Abel_The_Last_Son.Core.Enums;
 using Microsoft.Xna.Framework;
 
@@ -39,6 +40,8 @@ public class Zombie : Sprite , IEnemy
             return new Rectangle(x, y, width, height);
         }
     }
+    
+    public List<Rectangle> CurrentWalls { get; set; } = new List<Rectangle>();
 
     public Zombie(Player player) : base("ZombieFrontAnimation")
     {
@@ -67,7 +70,7 @@ public class Zombie : Sprite , IEnemy
         {
             return;
         }
-        
+        Console.WriteLine(transform.position);
         FollowPlayer(gameTime); // follow our player
         Animate(gameTime); // play the walk animation for the zombie
     }
@@ -107,7 +110,29 @@ public class Zombie : Sprite , IEnemy
         
         direction.Normalize();
         
-        transform.position += direction * MovementSpeed * deltaTime;
+        transform.position.X += direction.X * MovementSpeed * deltaTime;
+        
+        foreach (var wall in CurrentWalls)
+        {
+            if (Collider.Intersects(wall))
+            {
+                // If we hit a wall, undo the X movement!
+                transform.position.X -= direction.X * MovementSpeed * deltaTime;
+                break; // No need to check other walls
+            }
+        }
+        
+        transform.position.Y += direction.Y * MovementSpeed * deltaTime;
+        
+        foreach (var wall in CurrentWalls)
+        {
+            if (Collider.Intersects(wall))
+            {
+                // If we hit a wall, undo the X movement!
+                transform.position.Y -= direction.Y * MovementSpeed * deltaTime;
+                break; // No need to check other walls
+            }
+        }
         
         ChooseAnimation(direction);
     }

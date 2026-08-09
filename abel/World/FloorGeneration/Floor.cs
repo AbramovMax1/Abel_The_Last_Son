@@ -27,7 +27,7 @@ public class Floor
     private int newCollumns = -1;
     private bool generatedRoom = false;
     
-    public Floor generateFloor(Difficulty difficulty)
+    public Floor generateFloor(Difficulty difficulty, Player player)
     {
         CalculateBasedOnDiffiulty(difficulty, out Vector2 grideCenter);
         bool generationSuccessful = false;
@@ -41,7 +41,7 @@ public class Floor
 
             // generate the first room 
             roomQueue.Enqueue(roomArray[collumns / 2, rows / 2] =
-                new Room("FloorOne", difficulty, rows / 2, collumns / 2,grideCenter , Direction.None, true, true));
+                new Room(player,"FloorOne", difficulty, rows / 2, collumns / 2,grideCenter , Direction.None, true, true));
             Room currentRoom = null;
             dequeueRoom = true;
 
@@ -239,7 +239,7 @@ public class Floor
                     roomQueue.Enqueue(currentRoom);
                     // create a new room based on the current difficulty, array, and makes the entrance direction the inverted of this direction 
                     currentRoom = new Room
-                        ("FloorOne",difficulty, newRows, newCollumns,grideCenter ,TransferIntToDirection((direction + 2) % 4));
+                        (player, "FloorOne",difficulty, newRows, newCollumns,grideCenter ,TransferIntToDirection((direction + 2) % 4));
                     roomArray[newCollumns, newRows] = currentRoom;
                     currentRoomAmount++;
                     generatedRoom = true;
