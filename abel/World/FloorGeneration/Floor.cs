@@ -244,10 +244,6 @@ public class Floor
                     currentRoomAmount++;
                     generatedRoom = true;
                     
-
-                
-
-                   
                 }
 
                 if (!generatedRoom)
@@ -277,7 +273,7 @@ public class Floor
                     if (room.doors[i] != null)
                     {
                         doorCount++;
-                        doorDirectionIndex = i; // Store the index of the single door
+                        doorDirectionIndex = i;
                     }
                 }
 
@@ -287,8 +283,6 @@ public class Floor
                     {
                         room.ChangeRoomType(Room.RoomType.LockedEndRoom);
             
-                        // ONLY lock the adjacent room's side (the outside entrance),
-                        // leaving the door inside the locked room completely unlocked.
                         if (doorDirectionIndex != -1)
                         {
                             DirectionConvertor(doorDirectionIndex, room, out int neighborRow, out int neighborCol);
@@ -297,9 +291,10 @@ public class Floor
                             if (adjacentRoom != null)
                             {
                                 int oppositeDirection = (doorDirectionIndex + 2) % 4;
+                                Direction oppDir = TransferIntToDirection(oppositeDirection);
                                 if (adjacentRoom.doors[oppositeDirection] != null)
                                 {
-                                    adjacentRoom.doors[oppositeDirection].Lock();
+                                    adjacentRoom.LockDoor(oppDir);
                                 }
                             }
                         }

@@ -416,6 +416,7 @@ public class Player : Sprite, ICollidable, IDamageable
         }
         
         Health -= damage;
+        Game1.hurtSound.Play();
 
         if (Health <= 0)
         {

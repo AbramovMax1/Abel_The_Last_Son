@@ -13,6 +13,8 @@ using Abel_The_Last_Son.Manager;
 using Abel_The_Last_Son.World.Doors;
 using Abel_The_Last_Son.World.Trash;
 using Abel_The_Last_Son.Items;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Abel_The_Last_Son;
 
@@ -37,6 +39,16 @@ public class Game1 : Game
 
     private const float RoomEntryZombieDelay = 0.8f;
 
+    // ============ 
+    // Audio Assets
+    private Song mainMenuMusic;
+    private Song dungeonAmbiance;
+    public static SoundEffect itemPickUpSound;
+    public static SoundEffect doorUnlockSound;
+    public static SoundEffect shootSound;
+    public static SoundEffect zombieSound;
+    public static SoundEffect hurtSound;
+    
     // ============
     // KeyBinds
     private KeyboardState previousCombatKeyboard;
@@ -159,6 +171,10 @@ public class Game1 : Game
         RightDoorLocked();
         SpriteManager.AddSprite("DoorOneLocked", "Images/DoorFrameLockedFloorOne-export");
         SpriteManager.AddSprite("DoorTwoLocked", "Images/DoorFrameLockedFlootTwo");
+        SpriteManager.AddSprite("CloseDoorOne", "Images/JustLookDoorFloorOne");
+        SpriteManager.AddSprite("CloseDoorTwo", "Images/JustLockedDoorFloorTwo");
+        SpriteManager.AddSprite("OpenDoorOne", "Images/DoorFrameUnlockedFloorOne-export");
+        SpriteManager.AddSprite("OpenDoorTwo", "Images/DoorFrameUnlockedFloorTwo");
         
         
         // Characters
@@ -188,6 +204,27 @@ public class Game1 : Game
         // Items
         //=============
         DoorKeySprite();
+        
+        mainMenuMusic = Content.Load<Song>("Sound/Music/BackGroundMusic");
+        dungeonAmbiance = Content.Load<Song>("Sound/SFX/DungenEmbianse");
+        itemPickUpSound = Content.Load<SoundEffect>("Sound/SFX/ItemPickUp");
+        doorUnlockSound = Content.Load<SoundEffect>("Sound/SFX/DoorUnlock");
+        shootSound = Content.Load<SoundEffect>("Sound/SFX/ShotSound");
+        zombieSound = Content.Load<SoundEffect>("Sound/SFX/ZombieSound");
+        hurtSound = Content.Load<SoundEffect>("Sound/SFX/HurtSound");
+        
+        // make it so that the sound will not be so loud
+        MediaPlayer.Volume = 0.3f;
+        
+        // To play it on loop:
+        MediaPlayer.Play(dungeonAmbiance);
+        MediaPlayer.IsRepeating = true;
+        
+        // Start Main Menu Music on loop
+       
+        MediaPlayer.Play(mainMenuMusic);
+        MediaPlayer.IsRepeating = true;
+        
         
         Start();
     }
@@ -628,6 +665,10 @@ public class Game1 : Game
                 foreach (Sprite obj in activeRoom.objectList)
                 {
                     sprites.Remove(obj);
+                    if (obj is Zombie zombie)
+                    {
+                        zombie.StopSound();
+                    }
                 }
 
                 // Update active room
@@ -710,7 +751,11 @@ public class Game1 : Game
 
             bool shotWasCreated = player.Weapon.TryAttack(player.transform.position, shootingDirection);
 
-            if (!shotWasCreated)
+            if (shotWasCreated)
+            {
+                shootSound.Play(0.4f, 0.0f, 0.0f); // Add this line
+            }
+            else
             {
                 Console.WriteLine("Holy water could not fire");
             }
@@ -841,7 +886,10 @@ public class Game1 : Game
     {
         ClearPreviousRun();
         player.ResetForNewGame();
-
+        
+        MediaPlayer.Play(dungeonAmbiance);
+        MediaPlayer.IsRepeating = true;
+        
         gameStarted = true;
         gameOver = false;
         IsMouseVisible = false;
@@ -906,9 +954,14 @@ public class Game1 : Game
             {
                 if (sprite is Room room)
                 {
-                    foreach (Zombie enemy in room.objectList)
+                    // Change 'Zombie enemy' to 'Sprite obj' to prevent the InvalidCastException
+                    foreach (Sprite obj in room.objectList)
                     {
-                        sprites.Remove(enemy);
+                        sprites.Remove(obj);
+                        if (obj is Zombie zombie)
+                        {
+                            zombie.StopSound();
+                        }
                     }
                 }
 
@@ -930,7 +983,10 @@ public class Game1 : Game
     {
         ClearPreviousRun();
         player.ResetForNewGame();
-
+        
+        MediaPlayer.Play(mainMenuMusic);
+        MediaPlayer.IsRepeating = true;
+        
         gameStarted = false;
         gameOver = false;
         IsMouseVisible = true;
@@ -959,6 +1015,7 @@ public class Game1 : Game
             }
             
             doorKey.Collect(player);
+            Game1.itemPickUpSound.Play();
             sprites.Remove(doorKey);
             DoorKeys.RemoveAt(i);
         }

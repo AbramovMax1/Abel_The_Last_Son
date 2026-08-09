@@ -24,17 +24,30 @@ public class Door : Sprite, ICollidable
     public bool locked {get; private set;}
     private Direction direction;
     
-    public Door(Direction direction , string doorSpriteName, bool open, bool locked = false ) : base(doorSpriteName)
+    private string closedSprite;
+    private string openSprite;
+    private string lockedSprite;
+    
+    public Door(Direction direction, string closedSprite, string openSprite, string lockedSprite, bool open, bool locked = false) 
+        : base(locked ? lockedSprite : (open ? openSprite : closedSprite))
     {
-        this.open = open;
         this.direction = direction;
+        this.open = open;
         this.locked = locked;
+        this.closedSprite = closedSprite;
+        this.openSprite = openSprite;
+        this.lockedSprite = lockedSprite;
+
+        UpdateTexture();
 
         float scale = 10f;
         transform.scale = new Vector2(scale, scale);
 
-        if (doorSpriteName == "DoorTwoLocked") transform.rotation -= MathHelper.ToRadians(90);
-        
+        if (closedSprite == "DoorTwoLocked" || lockedSprite == "DoorTwoLocked") 
+        {
+            transform.rotation -= MathHelper.ToRadians(90);
+        }
+    
         HandleRotation();
     }
 
@@ -43,26 +56,51 @@ public class Door : Sprite, ICollidable
         base.Start();
         
     }
-    
+
     public void Open()
     {
-        open = true;
+        if (!locked)
+        {
+            open = true;
+            UpdateTexture();
+        }
     }
 
     public void Close()
     {
-        open = false;
+        if (!locked)
+        {
+            open = false;
+            UpdateTexture();
+        }
     }
     public void Lock()
     {
         locked = true;
         open = false;
+        UpdateTexture();
     }
 
     public void Unlock()
     {
         locked = false;
         open = true;
+        UpdateTexture();
+    }
+    
+    public void ConvertToLocked(string newLockedSprite)
+    {
+        this.lockedSprite = newLockedSprite;
+        Lock();
+    }
+    private void UpdateTexture()
+    {
+        string targetSprite = locked ? lockedSprite : (open ? openSprite : closedSprite);
+        var spriteSheet = SpriteManager.GetSprite(targetSprite);
+        if (spriteSheet != null)
+        {
+            this.texture = spriteSheet.texture;
+        }
     }
     
     void HandleRotation()

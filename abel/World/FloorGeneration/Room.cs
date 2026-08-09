@@ -29,6 +29,9 @@ public class Room : Sprite
     // door sprite
     private string doorSpriteName;
     private string lockedDoorSpriteName;
+    private string closedSpriteName;
+    private string openSpriteName; 
+    public string lockedSpriteName { get; private set; }
 
     private const int scale = 15;
 
@@ -131,14 +134,18 @@ public class Room : Sprite
 
             if (door.locked)
             {
-                // Check if player collides with the locked door and has at least one key
-                if (currentPlayer != null && door.Collider.Intersects(currentPlayer.Collider))
+                // Create an expanded interaction boundary so touching/pressing against the door triggers it
+                Rectangle interactionBox = door.Collider;
+                interactionBox.Inflate(8, 8); // Expands the detection box by 8 pixels in all directions
+
+                // Check if player interacts with the locked door and has at least one key
+                if (currentPlayer != null && interactionBox.Intersects(currentPlayer.Collider))
                 {
-                    // Assumes player has a Keys property or a method to consume a key
                     if (currentPlayer.GetKeyCount() > 0)
                     {
                         currentPlayer.UseKey(); // Consumes a key
                         door.Unlock(); // Unlocks and opens the door
+                        Game1.doorUnlockSound.Play();
                     }
                 }
             }
@@ -258,15 +265,17 @@ public class Room : Sprite
     public void AddDoor(Direction direction, bool doorExist)
     {
         if (!doorExist) return;
-        if (isStartRoom)
-        {
-            doors[DirectionToNumber(direction)] = new Door(direction, doorSpriteName, true);
-        }
-        else
-        {
-            doors[DirectionToNumber(direction)] = new Door(direction, doorSpriteName, false);
-        }
+        bool isOpen = isStartRoom;
+        doors[DirectionToNumber(direction)] = new Door(direction, closedSpriteName, openSpriteName, lockedSpriteName, isOpen, false);
         doors[DirectionToNumber(direction)].Start();
+    }
+    public void LockDoor(Direction direction)
+    {
+        int index = DirectionToNumber(direction);
+        if (index >= 0 && doors[index] != null)
+        {
+            doors[index].ConvertToLocked(lockedSpriteName);
+        }
     }
 
     public void ChangeRoomType(RoomType newRoomType)
@@ -281,17 +290,23 @@ public class Room : Sprite
         {
             case Floor.Difficulty.Easy:
             {
-                doorSpriteName = "DoorOneLocked";
+                closedSpriteName = "CloseDoorOne";
+                openSpriteName = "OpenDoorOne";
+                lockedSpriteName = "DoorOneLocked";
                 break;
             }
             case Floor.Difficulty.Medium:
             {
-                doorSpriteName = "DoorTwoLocked";
+                closedSpriteName = "CloseDoorTwo";
+                openSpriteName = "OpenDoorTwo";
+                lockedSpriteName = "DoorTwoLocked";
                 break;
             }
             case Floor.Difficulty.Hard:
             {
-                doorSpriteName = "DoorOneLocked";
+                closedSpriteName = "CloseDoorOne";
+                openSpriteName = "OpenDoorOne";
+                lockedSpriteName = "DoorOneLocked";
                 break;
             }
         }
@@ -365,11 +380,11 @@ public class Room : Sprite
             {
                 tempList.Add(inisializeZombie(roomGrid[10,1]));
                 tempList.Add(inisializeZombie(roomGrid[10,5]));
-                tempList.Add(inisializeZombie(roomGrid[2,5]));
+                tempList.Add(inisializeZombie(roomGrid[8,5]));
                 tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
-                tempList.Add(InitializeRock(roomGrid[3,1]));
-                tempList.Add(InitializeRock(roomGrid[2,1]));
-                tempList.Add(InitializeRock(roomGrid[1,1]));
+                tempList.Add(InitializeRock(roomGrid[3,4]));
+                tempList.Add(InitializeRock(roomGrid[2,4]));
+                tempList.Add(InitializeRock(roomGrid[1,4]));
                 break;
             }
             case 1:

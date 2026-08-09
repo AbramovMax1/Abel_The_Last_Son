@@ -16,6 +16,8 @@
     <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Images/Front-Animation-Sprite.png</File>
     <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Images/Front-Animation-Zombie.png</File>
     <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Images/HollyWater.png</File>
+    <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Images/JustLockedDoorFloorTwo.png</File>
+    <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Images/JustLookDoorFloorOne.png</File>
     <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Images/Left-Aniamtion-Zombie.png</File>
     <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Images/Paper.png</File>
     <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Images/pixel.png</File>
@@ -23,6 +25,13 @@
     <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Images/Right-Animation-Zombie.png</File>
     <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Images/Rock.png</File>
     <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Items/KeyDoor.png</File>
+    <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Sound/Music/BackGroundMusic.mp3</File>
+    <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Sound/SFX/DoorUnlock.wav</File>
+    <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Sound/SFX/DungenEmbianse.mp3</File>
+    <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Sound/SFX/HurtSound.wav</File>
+    <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Sound/SFX/ItemPickUp.wav</File>
+    <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Sound/SFX/ShotSound.wav</File>
+    <File>C:/unity projects/Abel_The_Last_Son/abel/Content/Sound/SFX/ZombieSound.wav</File>
     <File>C:/unity projects/Abel_The_Last_Son/abel/Content/UI/BackButton.png</File>
     <File>C:/unity projects/Abel_The_Last_Son/abel/Content/UI/Heart.png</File>
     <File>C:/unity projects/Abel_The_Last_Son/abel/Content/UI/MainMenuBackground.png</File>
@@ -51,6 +60,15 @@
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File>Sound/Music/BackGroundMusic</File>
+    <File>Sound/SFX/DoorUnlock</File>
+    <File>Sound/SFX/DungenEmbianse</File>
+    <File>Sound/SFX/HurtSound</File>
+    <File>Sound/SFX/ItemPickUp</File>
+    <File>Sound/SFX/ShotSound</File>
+    <File>Sound/SFX/ZombieSound</File>
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

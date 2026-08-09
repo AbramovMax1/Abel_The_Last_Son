@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Abel_The_Last_Son.Core.Enums;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Abel_The_Last_Son.Enemies;
 
@@ -25,6 +26,8 @@ public class Zombie : Sprite , IEnemy
     private const float FadeStartTime = 0.2f;
     
     public bool ReadyToRemove { get; private set; } = false;
+    
+    private SoundEffectInstance zombieSoundInstance;
     
     public event Action OnDeath;
     
@@ -61,6 +64,10 @@ public class Zombie : Sprite , IEnemy
     {
         base.Start();
         
+        zombieSoundInstance = Game1.zombieSound.CreateInstance();
+        zombieSoundInstance.IsLooped = true;
+        zombieSoundInstance.Volume = 0.3f;
+        
         frontAniamtion = SpriteManager.GetSprite("ZombieFrontAnimation");
         backAniamtion = SpriteManager.GetSprite("ZombieBackAnimation");
         leftAniamtion = SpriteManager.GetSprite("ZombieLeftAnimation");
@@ -80,6 +87,11 @@ public class Zombie : Sprite , IEnemy
             UpdateDeathEffect(gameTime);
             
             return;
+        }
+        
+        if (zombieSoundInstance != null && zombieSoundInstance.State != SoundState.Playing)
+        {
+            zombieSoundInstance.Play();
         }
 
         if (roomEntryDelayTimer > 0f)
@@ -112,9 +124,8 @@ public class Zombie : Sprite , IEnemy
         if (Health <= 0)
         {
             Health = 0;
-            
             StartDeathEffect();
-            
+            zombieSoundInstance?.Stop();
             OnDeath?.Invoke();
         }
 
@@ -266,7 +277,12 @@ public class Zombie : Sprite , IEnemy
 
         if (deathTimer >= DeathDuration)
         {
+            zombieSoundInstance?.Dispose();
             ReadyToRemove = true;
         }
+    }
+    public void StopSound()
+    {
+        zombieSoundInstance?.Stop();
     }
 }
