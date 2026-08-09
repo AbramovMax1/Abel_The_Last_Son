@@ -47,6 +47,7 @@ public class Player : Sprite, ICollidable, IDamageable
 
     // Wall Collision check
     public List<Rectangle> CurrentWalls { get; set; } = new List<Rectangle>();
+    public List<Rectangle> CurrentDoors { get; set; } = new List<Rectangle>();
 
     public Player() : base("AbelFrontAnimation")
     {
@@ -282,11 +283,20 @@ public class Player : Sprite, ICollidable, IDamageable
             {
                 if (Collider.Intersects(wall))
                 {
-                    // If we hit a wall, undo the X movement!
                     transform.position.X -= velocity.X;
-                    break; // No need to check other walls
+                    break;
                 }
             }
+
+            foreach (var door in CurrentDoors)
+            {
+                if (Collider.Intersects(door))
+                {
+                    transform.position.X -= velocity.X;
+                    break;
+                }
+            }
+
 
             // 3. Move on the Y axis next
             transform.position.Y += velocity.Y;
@@ -296,7 +306,14 @@ public class Player : Sprite, ICollidable, IDamageable
             {
                 if (Collider.Intersects(wall))
                 {
-                    // If we hit a wall, undo the Y movement!
+                    transform.position.Y -= velocity.Y;
+                    break;
+                }
+            }
+            foreach (var door in CurrentDoors)
+            {
+                if (Collider.Intersects(door))
+                {
                     transform.position.Y -= velocity.Y;
                     break;
                 }

@@ -5,6 +5,7 @@ using Abel_The_Last_Son;
 using Abel_The_Last_Son.Core.Enums;
 using Abel_The_Last_Son.Enemies;
 using Abel_The_Last_Son.Manager;
+using Abel_The_Last_Son.World.Trash;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -21,14 +22,13 @@ public class Room : Sprite
     public List<Door> doors = new List<Door>(4);
     public List<bool> doorGenerationAttempt = new List<bool>(4);
     public bool isStartRoom { get; private set; }
-    public List<Zombie> enemyList {get; private set;}
+    public List<Sprite> objectList {get; private set;}
     
     public Player currentPlayer;
 
     // door sprite
     private string doorSpriteName;
     private string lockedDoorSpriteName;
-
 
     private const int scale = 15;
 
@@ -38,7 +38,7 @@ public class Room : Sprite
         EndRoom
     }
 
-   
+    private Vector2[,] roomGrid;
     
     public Direction entranceDoorDirection { get; private set; }
 
@@ -57,8 +57,7 @@ public class Room : Sprite
         else return $"{currentRoom.ToString()} at {row}, {collumn}";
 
     }
-
-
+    
     public Room(Player player, string spriteName, Floor.Difficulty difficulty, int currentRow, int currentCullumn, Vector2 grideSecnter ,
        Direction entranceDoorDirection = Direction.None, bool isStartRoom = false, bool isCurrentRoom = false) : base(spriteName)
     {
@@ -67,7 +66,7 @@ public class Room : Sprite
         collumn = currentCullumn;
         row = currentRow;
 
-        enemyList = new List<Zombie>();
+        objectList = new List<Sprite>();
         
         transform.scale = new Vector2(scale,scale); // make room size up to regular scale
         Start();
@@ -89,6 +88,8 @@ public class Room : Sprite
         // Position the room relative to the screen center plus its grid offset
         transform.position = new Vector2(Game1._screenCenter.X + offsetX, Game1._screenCenter.Y - offsetY);
 
+        roomGrid = DivideRoomToGrid();
+        
         this.isStartRoom = isStartRoom;
         this.entranceDoorDirection = entranceDoorDirection;
         this.isCurrentRoom = isCurrentRoom;
@@ -107,7 +108,7 @@ public class Room : Sprite
             AddDoor(entranceDoorDirection, true);
             doorGenerationAttempt[(int)entranceDoorDirection] = true;
 
-            enemyList = ChoosZombiesSpawnPositions();
+            objectList = ChoosZombiesSpawnPositions();
             //generate enemy's
         }
         else
@@ -116,10 +117,30 @@ public class Room : Sprite
         }
 
     }
-    
+
+    public override void Update(GameTime gameTime)
+    {
+        if (enemyAmount <= 0)
+        {
+            foreach (var door in doors)
+            {
+                if (door != null) door.Open();
+            }
+        }
+        else
+        {
+           
+            foreach (var door in doors)
+            {
+                if (door != null) door.Close();
+            } 
+        }
+        base.Update(gameTime);
+    }
+
     public List<Rectangle> WallColliders { get; private set; } = new List<Rectangle>();
 
-    public void CreateWallsAndDoors()
+    private void CreateWallsAndDoors()
 {
     int wallThickness = (int)(12 * scale);
     int doorSize = (int)(12 * scale);
@@ -241,23 +262,19 @@ public class Room : Sprite
         Random rnd = new Random();
         switch (difficulty)
         {
-            //TODo: change enemy generation to an aray of set incounters
             case Floor.Difficulty.Easy:
             {
                 doorSpriteName = "DoorOneLocked";
-                enemyAmount = rnd.Next(1, 4);
                 break;
             }
             case Floor.Difficulty.Medium:
             {
                 doorSpriteName = "DoorTwoLocked";
-                enemyAmount = rnd.Next(4, 6);
                 break;
             }
             case Floor.Difficulty.Hard:
             {
                 doorSpriteName = "DoorOneLocked";
-                enemyAmount = rnd.Next(6, 8);
                 break;
             }
         }
@@ -268,7 +285,7 @@ public class Room : Sprite
         CreateWallsAndDoors();
     }
 
-    public int DirectionToNumber(Direction direction)
+    private int DirectionToNumber(Direction direction)
     {
         switch (direction)
         {
@@ -285,15 +302,130 @@ public class Room : Sprite
         }
     }
 
-    List<Zombie> ChoosZombiesSpawnPositions()
+    private Vector2[,] DivideRoomToGrid()
     {
-        List<Zombie> tempList = new();
+        // Create the 2D array to hold the Vector2 positions
+        Vector2[,] gridPositions = new Vector2[15, 7];
+    
+        float cellWidth = 106;
+        float cellHeight = 90;
         
+        // Calculate the total size of the grid
+        float totalGridWidth = 15 * cellWidth;
+        float totalGridHeight = 7 * cellHeight;
+
+        // Find the very top-left starting coordinate of the walkable room.
+        // Assuming transform.position is the exact center of the room.
+        float startX = transform.position.X - (totalGridWidth / 2f) + (cellWidth / 2f);
+        float startY = transform.position.Y - (totalGridHeight / 2f) + (cellHeight / 2f);
+
+        // Your nested loops!
+        for (int col = 0; col < 15; col++)
+        {
+            for (int row = 0; row < 7; row++)
+            {
+                // MULTIPLY the current row/col by the cell size to get the exact world position
+                float cellX = startX + (col * cellWidth);
+                float cellY = startY + (row * cellHeight);
+
+                // Store the position in the grid
+                gridPositions[col, row] = new Vector2(cellX, cellY);
+            }
+        }
+    
+        return gridPositions;
+    }
+    
+
+    List<Sprite> ChoosZombiesSpawnPositions()
+    {
+        List<Sprite> tempList = new();
+        Random rnd = new Random();
+        int chosenEnemySpawn = rnd.Next(4);
+        switch (chosenEnemySpawn)
+        {
+            case 0:
+            {
+                tempList.Add(inisializeZombie(roomGrid[10,1]));
+                tempList.Add(inisializeZombie(roomGrid[10,6]));
+                tempList.Add(inisializeZombie(roomGrid[2,6]));
+                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeRock(roomGrid[3,2]));
+                tempList.Add(InitializeRock(roomGrid[2,2]));
+                tempList.Add(InitializeRock(roomGrid[1,2]));
+                break;
+            }
+            case 1:
+            {
+                tempList.Add(inisializeZombie(roomGrid[10,3]));
+                tempList.Add(inisializeZombie(roomGrid[3,5]));
+                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeRock(roomGrid[9,6]));
+                tempList.Add(InitializeRock(roomGrid[8,6]));
+                tempList.Add(InitializeRock(roomGrid[9,6]));
+                tempList.Add(InitializeRock(roomGrid[8,6]));
+                
+                break;
+            }
+            case 2:
+            {
+                tempList.Add(inisializeZombie(roomGrid[3,3]));
+                tempList.Add(inisializeZombie(roomGrid[10,5]));
+                tempList.Add(inisializepPaper(roomGrid[rnd.Next(1,15),rnd.Next(1,7)]));
+                tempList.Add(InitializeRock(roomGrid[2,5]));
+                tempList.Add(InitializeRock(roomGrid[5,2]));
+                tempList.Add(InitializeRock(roomGrid[14,5]));
+                tempList.Add(InitializeRock(roomGrid[12,1]));
+                break;
+            }
+            case 3:
+            {
+                tempList.Add(inisializeZombie(roomGrid[8,2]));
+                tempList.Add(inisializeZombie(roomGrid[14,2]));
+                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
+                break;
+            }
+        }
+        
+       
+        
+        return tempList;
+    }
+
+    private NotColletiblesPaper inisializepPaper(Vector2 position)
+    {
+        NotColletiblesPaper paper = new NotColletiblesPaper();
+        paper.Start();
+        paper.transform.position = position;
+        return paper;
+    }
+    private Rock InitializeRock(Vector2 position)
+    {
+        Rock rock = new Rock();
+        rock.Start();
+        rock.transform.position = position;
+
+        // ADD THIS: Register the rock's collider as a wall so the player slides against it!
+        WallColliders.Add(rock.Collider);
+
+        return rock;
+    }
+    private Zombie inisializeZombie(Vector2 position)
+    {
         Zombie zombie = new Zombie(currentPlayer);
         zombie.Start();
-        zombie.transform.position = transform.position;
-        tempList.Add(zombie);
-        return tempList;
+        zombie.transform.position = position;
+        enemyAmount++;
+
+        zombie.OnDeath += () =>
+        {
+            enemyAmount--;
+            Console.WriteLine($"resived on death, enemy amount is  {enemyAmount}");
+        };
+        return zombie;
     }
 
     public override void DrawSprite(SpriteBatch spriteBatch)
@@ -307,7 +439,6 @@ public class Room : Sprite
 
             // Calculate the center of the texture so it rotates properly
             Vector2 origin = new Vector2(door.texture.Width / 2f, door.texture.Height / 2f);
-            Console.WriteLine(door.transform.position);
             // Draw using position, rotation, origin, and scale!
             spriteBatch.Draw(
                 door.texture,

@@ -20,6 +20,8 @@ public class Zombie : Sprite , IEnemy
     private const float MovementSpeed = 110f;
     private Direction facingDirection = Direction.Down;
     
+    public event Action OnDeath;
+    
     // Zombie stats
     public int MaxHealth { get; } = 3;
     public int Health { get; private set; } = 3;
@@ -70,7 +72,6 @@ public class Zombie : Sprite , IEnemy
         {
             return;
         }
-        Console.WriteLine(transform.position);
         FollowPlayer(gameTime); // follow our player
         Animate(gameTime); // play the walk animation for the zombie
     }
@@ -87,6 +88,9 @@ public class Zombie : Sprite , IEnemy
         if (Health <= 0)
         {
             Health = 0;
+            OnDeath?.Invoke();
+            Console.WriteLine("invoked on death");
+            
         }
 
         if (IsDead)

@@ -17,6 +17,12 @@ namespace Abel_The_Last_Son;
 
 public class Game1 : Game
 {
+    //temp
+    // At the top of your class
+    private Vector2[,] roomGrid;
+    private const float CellWidth = 64f;  // Adjust to your actual tile size
+    private const float CellHeight = 64f;
+    
     // =========== references =============
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -139,7 +145,8 @@ public class Game1 : Game
         FloorLevelOne(); // wall sprit for level one
         
         //NotCollectible Trash
-        TrashPaper();
+        TrashPaper(); 
+        SpriteManager.AddSprite("Rock", "Images/Rock", 1,1);
         
         // doors
         RightDoorLocked();
@@ -219,15 +226,12 @@ public class Game1 : Game
     {
         // ======== UI buttons
         // StartButton 
-        new SpriteManager(Content);
         SpriteManager.AddSprite("StartButton", "UI/StartButton");
         
         // settingsButton
-        new SpriteManager(Content);
         SpriteManager.AddSprite("SettingsButton", "UI/SettingsButton");
         
         // quitButton
-        new SpriteManager(Content);
         SpriteManager.AddSprite("QuitButton", "UI/QuitButtons");
     }
 
@@ -270,11 +274,11 @@ public class Game1 : Game
         player.Died += HandlePlayerDeath;
         
         // zombie
-        zombie = new Zombie(player);
-        zombie.Start();
-        zombies.Add(zombie); // add the zombie into the list 
-        sprites.Add(zombie); // add zombie into the sprite list 
-        
+        //zombie = new Zombie(player);
+        //zombie.Start();
+        //zombies.Add(zombie); // add the zombie into the list 
+        //sprites.Add(zombie); // add zombie into the sprite list 
+ 
         // The list will use sortingOrder to decide what draws first.
         sprites.Add(floorOne);
         sprites.Add(notColletiblesPaper);
@@ -312,9 +316,9 @@ public class Game1 : Game
                     if (room.isStartRoom) activeRoom = room;
                     // Note: We removed the "break;" here so the loop 
                     // continues and adds ALL the rooms to the sprites list!
-                    foreach (Zombie enemy in room.enemyList)
+                    foreach (Sprite obj in room.objectList)
                     {
-                        sprites.Add(enemy);
+                        sprites.Add(obj);
                     }
                 }
                 
@@ -364,15 +368,34 @@ public class Game1 : Game
             // 1. Pass the active room's walls to the player so they can slide against them
             if (activeRoom != null)
             {
+                activeRoom.Update(gameTime);
                 activeRoom.currentPlayer = player;
                 player.CurrentWalls = activeRoom.WallColliders;
-
-                foreach (var enemy in activeRoom.enemyList)
+                
+                List<Rectangle> closedDoors = new List<Rectangle>();
+                foreach (var door in activeRoom.doors) // check each door for close or open
                 {
-                    enemy.CurrentWalls = activeRoom.WallColliders;
-                    if (!enemy.IsDead)
+                    if (door != null && !door.open) // if close add to the list 
                     {
-                        enemy.Update(gameTime); // You were missing this for room zombies!
+                        closedDoors.Add(door.Collider);
+                    }
+                    else if (door != null && door.open) // if open remove from the list
+                    {
+                        closedDoors.Remove(door.Collider);
+                    }
+                }
+               
+                player.CurrentDoors = closedDoors;
+
+                foreach (Sprite obj in activeRoom.objectList)
+                {
+                    if (obj is Zombie zombie)
+                    {
+                        zombie.CurrentWalls = activeRoom.WallColliders;
+                        if (!zombie.IsDead)
+                        {
+                            zombie.Update(gameTime);
+                        }
                     }
                 }
             }
@@ -447,9 +470,12 @@ public class Game1 : Game
             
             if (activeRoom != null)
             {
-                foreach (Zombie enemy in activeRoom.enemyList)
+                foreach (Sprite obj in activeRoom.objectList)
                 {
-                    if (!enemy.IsDead) DrawCollider(enemy.Collider, Color.Red);
+                    if (obj is Zombie zombie && !zombie.IsDead) 
+                    {
+                        DrawCollider(zombie.Collider, Color.Red);
+                    }
                 }
             }
             
@@ -487,8 +513,8 @@ public class Game1 : Game
 
         base.Draw(gameTime);
     }
-
-    private void DrawCollider(Rectangle rectangle, Color color)
+ 
+    public void DrawCollider(Rectangle rectangle, Color color)
     {
         int thickness = 3; // this is the thickness of the collider
         
@@ -528,7 +554,7 @@ public class Game1 : Game
             
             // Check if door exists, is open (or unlocked), and touches player
             // You can add `&& door.open` if you want to ensure locked doors don't trigger!
-            if (door != null && door.Collider.Intersects(player.Collider)) 
+            if (door != null && door.Collider.Intersects(player.Collider) && door.open) 
             {
                 int nextCol = activeRoom.collumn;
                 int nextRow = activeRoom.row;
@@ -568,7 +594,7 @@ public class Game1 : Game
                     // Update active room
                     activeRoom = nextRoom;
 
-                    // Move player to the new door and apply the offset so they aren't stuck inside the door trigger!
+                    // Move player to the new door and apply the offset so they aren't stuck inside the door
                     Door arrivalDoor = activeRoom.doors[oppositeDoorIndex];
                     if (arrivalDoor != null)
                     {
@@ -610,13 +636,16 @@ public class Game1 : Game
         }
         if (activeRoom != null)
         {
-            foreach (Zombie enemy in activeRoom.enemyList)
+            foreach (Sprite obj in activeRoom.objectList)
             {
-                if (enemy.IsDead) continue;
-                if (enemy.Collider.Intersects(player.Collider))
+                if (obj is Zombie zombie)
                 {
-                    player.TakeDamage(enemy.ContactDamage);
-                    Console.WriteLine($"Player health: {player.Health}");
+                    if (zombie.IsDead) continue;
+                    if (zombie.Collider.Intersects(player.Collider))
+                    {
+                        player.TakeDamage(zombie.ContactDamage);
+                        Console.WriteLine($"Player health: {player.Health}");
+                    }
                 }
             }
         }
@@ -690,15 +719,18 @@ public class Game1 : Game
             
             if (activeRoom != null)
             {
-                foreach (Zombie enemy in activeRoom.enemyList)
+                foreach (Sprite obj in activeRoom.objectList)
                 {
-                    if (enemy.IsDead) continue;
-                
-                    if (projectile.Collider.Intersects(enemy.Collider))
+                    if (obj is Zombie zombie)
                     {
-                        enemy.TakeDamage(projectile.Damage);
-                        projectile.Destroy();
-                        break;
+                        if (zombie.IsDead) continue;
+        
+                        if (projectile.Collider.Intersects(zombie.Collider))
+                        {
+                            zombie.TakeDamage(projectile.Damage);
+                            projectile.Destroy();
+                            break;
+                        }
                     }
                 }
             }
@@ -721,16 +753,16 @@ public class Game1 : Game
         if (activeRoom == null) return;
 
         // Loop backwards through the active room's enemy list
-        lastIndex = activeRoom.enemyList.Count - 1;
+        lastIndex = activeRoom.objectList.Count - 1;
         for (int i = lastIndex; i >= 0; i--)
         {
-            if (activeRoom.enemyList[i].IsDead)
+            if (activeRoom.objectList[i] is Zombie zombie && zombie.IsDead)
             {
                 // 1. Remove the zombie from the drawing list so it disappears
-                sprites.Remove(activeRoom.enemyList[i]);
+                sprites.Remove(activeRoom.objectList[i]);
             
                 // 2. Remove the zombie from the room's active logic list
-                activeRoom.enemyList.RemoveAt(i);
+                activeRoom.objectList.RemoveAt(i);
             }
         }
     }
