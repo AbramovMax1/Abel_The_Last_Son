@@ -127,7 +127,6 @@ C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\pixel.x
 C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Right-Animation-Player.xnb
 C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Rock.xnb
 C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\WallsLevelOne.xnb
-C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\QuitButtons.xnb
 C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\SettingsButton.xnb
 C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\StartButton.xnb
 C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Back-Animation-Zombie.xnb
@@ -168,3 +167,8 @@ C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Items\KeyDoor.xnb
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\BackButton.xnb
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\RetryButton.xnb
+C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Items\KeyDoor.xnb
+C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\BackButton.xnb
+C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\MainMenuBackground.xnb
+C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\QuitButton.xnb
+C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\RetryButton.xnb

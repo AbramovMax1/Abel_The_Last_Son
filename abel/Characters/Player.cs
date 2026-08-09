@@ -444,6 +444,17 @@ public class Player : Sprite, ICollidable, IDamageable
         
         Console.WriteLine($"Player keys: {keyCount}");
     }
+    public void UseKey()
+    {
+        if (GetKeyCount() <= 0)
+        {
+            return;
+        }
+        
+        keyCount -= 1;
+        
+        Console.WriteLine($"Player keys: {keyCount}");
+    }
 
     public int GetKeyCount()
     {

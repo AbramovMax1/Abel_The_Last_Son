@@ -35,7 +35,8 @@ public class Room : Sprite
     public enum RoomType
     {
         bacicRoom,
-        EndRoom
+        EndRoom,
+        LockedEndRoom
     }
 
     private Vector2[,] roomGrid;
@@ -50,11 +51,15 @@ public class Room : Sprite
         {
             return $"E at {row}, {collumn}";
         }
+        else if (currentRoom == RoomType.LockedEndRoom)
+        {
+            return $"LE at {row}, {collumn}";
+        }
         else if (currentRoom == RoomType.bacicRoom)
         {
             return $"B at {row}, {collumn}";
         }
-        else return $"{currentRoom.ToString()} at {row}, {collumn}";
+        else return $"{currentRoom.ToString()} at {row}, {collumn}";    
 
     }
     
@@ -120,21 +125,33 @@ public class Room : Sprite
 
     public override void Update(GameTime gameTime)
     {
-        if (enemyAmount <= 0)
+        foreach (var door in doors)
         {
-            foreach (var door in doors)
+            if (door == null) continue;
+
+            if (door.locked)
             {
-                if (door != null) door.Open();
+                // Check if player collides with the locked door and has at least one key
+                if (currentPlayer != null && door.Collider.Intersects(currentPlayer.Collider))
+                {
+                    // Assumes player has a Keys property or a method to consume a key
+                    if (currentPlayer.GetKeyCount() > 0)
+                    {
+                        currentPlayer.UseKey(); // Consumes a key
+                        door.Unlock(); // Unlocks and opens the door
+                    }
+                }
+            }
+            else if (enemyAmount <= 0)
+            {
+                door.Open();
+            }
+            else
+            {
+                door.Close();
             }
         }
-        else
-        {
-           
-            foreach (var door in doors)
-            {
-                if (door != null) door.Close();
-            } 
-        }
+
         base.Update(gameTime);
     }
 
@@ -347,12 +364,12 @@ public class Room : Sprite
             case 0:
             {
                 tempList.Add(inisializeZombie(roomGrid[10,1]));
-                tempList.Add(inisializeZombie(roomGrid[10,6]));
-                tempList.Add(inisializeZombie(roomGrid[2,6]));
+                tempList.Add(inisializeZombie(roomGrid[10,5]));
+                tempList.Add(inisializeZombie(roomGrid[2,5]));
                 tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
-                tempList.Add(InitializeRock(roomGrid[3,2]));
-                tempList.Add(InitializeRock(roomGrid[2,2]));
-                tempList.Add(InitializeRock(roomGrid[1,2]));
+                tempList.Add(InitializeRock(roomGrid[3,1]));
+                tempList.Add(InitializeRock(roomGrid[2,1]));
+                tempList.Add(InitializeRock(roomGrid[1,1]));
                 break;
             }
             case 1:

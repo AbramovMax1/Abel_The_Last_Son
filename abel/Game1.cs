@@ -578,73 +578,84 @@ public class Game1 : Game
             color);
         
     }
-    
     private void CheckRoomTransitions()
+{
+    if (activeRoom == null) return;
+
+    // Loop through all 4 doors of the current room
+    for (int i = 0; i < 4; i++)
     {
-        if (activeRoom == null) return;
-
-        // Loop through all 4 doors of the current room
-        for (int i = 0; i < 4; i++)
+        Door door = activeRoom.doors[i];
+        
+        if (door != null && door.Collider.Intersects(player.Collider)) 
         {
-            Door door = activeRoom.doors[i];
-            
-            // Check if door exists, is open (or unlocked), and touches player
-            // You can add `&& door.open` if you want to ensure locked doors don't trigger!
-            if (door != null && door.Collider.Intersects(player.Collider)) 
+            int nextCol = activeRoom.collumn;
+            int nextRow = activeRoom.row;
+            int oppositeDoorIndex = 0;
+            Vector2 spawnOffset = Vector2.Zero;
+
+            // Figure out which way we are going on the grid based on the door hit
+            switch (i)
             {
-                int nextCol = activeRoom.collumn;
-                int nextRow = activeRoom.row;
-                int oppositeDoorIndex = 0;
-                Vector2 spawnOffset = Vector2.Zero;
-
-                // Figure out which way we are going on the grid based on the door hit
-                switch (i)
-                {
-                    case 0: // Went UP
-                        nextRow += 1;
-                        oppositeDoorIndex = 2; // Arrive at DOWN door
-                        spawnOffset = new Vector2(0, -250); // Push slightly UP into the room
-                        break;
-                    case 1: // Went RIGHT
-                        nextCol += 1;
-                        oppositeDoorIndex = 3; // Arrive at LEFT door
-                        spawnOffset = new Vector2(250, 0); // Push slightly RIGHT into the room
-                        break;
-                    case 2: // Went DOWN
-                        nextRow -= 1;
-                        oppositeDoorIndex = 0; // Arrive at UP door
-                        spawnOffset = new Vector2(0, 250); // Push slightly DOWN into the room
-                        break;
-                    case 3: // Went LEFT
-                        nextCol -= 1;
-                        oppositeDoorIndex = 1; // Arrive at RIGHT door
-                        spawnOffset = new Vector2(-250, 0); // Push slightly LEFT into the room
-                        break;
-                }
-
-                // Get the next room from the floor array
-                Room nextRoom = currentFloor.GetRoomAt(nextCol, nextRow);
-
-                if (nextRoom != null)
-                {
-                    // Update active room
-                    activeRoom = nextRoom;
-
-                    // Move player to the new door and apply the offset so they aren't stuck inside the door trigger!
-                    Door arrivalDoor = activeRoom.doors[oppositeDoorIndex];
-                    if (arrivalDoor != null)
-                    {
-                        player.transform.position = arrivalDoor.transform.position + spawnOffset;
-                    }
-
-                    // Move the Camera to center on the new room!
-                    camera.Position = activeRoom.transform.position;
+                case 0: // Went UP
+                    nextRow += 1;
+                    oppositeDoorIndex = 2; 
+                    spawnOffset = new Vector2(0, -250); 
                     break;
+                case 1: // Went RIGHT
+                    nextCol += 1;
+                    oppositeDoorIndex = 3; 
+                    spawnOffset = new Vector2(250, 0); 
+                    break;
+                case 2: // Went DOWN
+                    nextRow -= 1;
+                    oppositeDoorIndex = 0; 
+                    spawnOffset = new Vector2(0, 250); 
+                    break;
+                case 3: // Went LEFT
+                    nextCol -= 1;
+                    oppositeDoorIndex = 1; 
+                    spawnOffset = new Vector2(-250, 0); 
+                    break;
+            }
+
+            // Get the next room from the floor array
+            Room nextRoom = currentFloor.GetRoomAt(nextCol, nextRow);
+
+            if (nextRoom != null)
+            {
+                // 1. Remove old room's objects from the global draw list
+                foreach (Sprite obj in activeRoom.objectList)
+                {
+                    sprites.Remove(obj);
                 }
+
+                // Update active room
+                activeRoom = nextRoom;
+
+                // 2. Add new room's objects to the global draw list so they render!
+                foreach (Sprite obj in activeRoom.objectList)
+                {
+                    sprites.Add(obj);
+                }
+
+                // If it's a new room with enemies, trigger their spawn delay
+                StartRoomEnemyDelay(activeRoom);
+
+                // Move player to the new door and apply offset
+                Door arrivalDoor = activeRoom.doors[oppositeDoorIndex];
+                if (arrivalDoor != null)
+                {
+                    player.transform.position = arrivalDoor.transform.position + spawnOffset;
+                }
+
+                // Move the Camera to center on the new room!
+                camera.Position = activeRoom.transform.position;
+                break;
             }
         }
     }
-
+}
     private void ZombieAnimation()
     {
         SpriteManager.AddSprite("ZombieFrontAnimation", "Images/Front-Animation-Zombie", 4, 2);
@@ -779,10 +790,9 @@ public class Game1 : Game
 
         for (int i = lastIndex; i >= 0; i--)
         {
-            if (zombies[i].ReadyToRemove)
+            if (zombies[i].IsDead || zombies[i].ReadyToRemove)
             {
                 sprites.Remove(zombies[i]);
-                
                 zombies.RemoveAt(i);
             }
         }
@@ -792,11 +802,11 @@ public class Game1 : Game
         lastIndex = activeRoom.objectList.Count - 1;
         for (int i = lastIndex; i >= 0; i--)
         {
-            if (activeRoom.objectList[i] is Zombie zombie && zombie.ReadyToRemove)
+            if (activeRoom.objectList[i] is Zombie zombie && (zombie.IsDead || zombie.ReadyToRemove))
             {
                 // 1. Remove the zombie from the drawing list so it disappears
                 sprites.Remove(activeRoom.objectList[i]);
-            
+        
                 // 2. Remove the zombie from the room's active logic list
                 activeRoom.objectList.RemoveAt(i);
             }
@@ -872,9 +882,12 @@ public class Game1 : Game
 
     private void StartRoomEnemyDelay(Room room)
     {
-        foreach (Zombie enemy in room.objectList)
+        foreach (Sprite obj in room.objectList)
         {
-            enemy.StartRoomEntryDelay(RoomEntryZombieDelay);
+            if (obj is Zombie enemy)
+            {
+                enemy.StartRoomEntryDelay(RoomEntryZombieDelay);
+            }
         }
     }
 

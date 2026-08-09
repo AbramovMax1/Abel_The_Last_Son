@@ -88,7 +88,6 @@ public class Zombie : Sprite , IEnemy
             return;
         }
 
-        Console.WriteLine(transform.position);
         FollowPlayer(gameTime); // follow our player
         Animate(gameTime); // play the walk animation for the zombie
     }
@@ -113,8 +112,10 @@ public class Zombie : Sprite , IEnemy
         if (Health <= 0)
         {
             Health = 0;
-
+            
             StartDeathEffect();
+            
+            OnDeath?.Invoke();
         }
 
         if (IsDead)

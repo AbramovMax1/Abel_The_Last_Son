@@ -21,13 +21,14 @@ public class Door : Sprite, ICollidable
 {
     public int position { get; private set; }
     public bool open {get; private set;}
-    private bool locked;
+    public bool locked {get; private set;}
     private Direction direction;
     
-    public Door(Direction direction , string doorSpriteName, bool open ) : base(doorSpriteName)
+    public Door(Direction direction , string doorSpriteName, bool open, bool locked = false ) : base(doorSpriteName)
     {
         this.open = open;
         this.direction = direction;
+        this.locked = locked;
 
         float scale = 10f;
         transform.scale = new Vector2(scale, scale);
@@ -51,6 +52,17 @@ public class Door : Sprite, ICollidable
     public void Close()
     {
         open = false;
+    }
+    public void Lock()
+    {
+        locked = true;
+        open = false;
+    }
+
+    public void Unlock()
+    {
+        locked = false;
+        open = true;
     }
     
     void HandleRotation()
