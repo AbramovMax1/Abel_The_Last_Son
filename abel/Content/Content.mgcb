@@ -13,6 +13,18 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin ../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/Doors/FloorOne/DoorFrameLockedFloorOne-export.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/Doors/FloorOne/DoorFrameLockedFloorOne-export.png;Images/DoorFrameLockedFloorOne-export.png
+
 #begin ../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/UI/Buttons/QuitButton.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -192,6 +204,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Images/HollyWater.png
+
+#begin Images/JustLockedDoorFloorTwo.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/JustLockedDoorFloorTwo.png
+
+#begin Images/JustLookDoorFloorOne.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/JustLookDoorFloorOne.png
 
 #begin Images/Left-Aniamtion-Zombie.png
 /importer:TextureImporter

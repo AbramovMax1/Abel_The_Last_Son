@@ -4,6 +4,7 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/Doors/FloorOne/DoorFrameLockedFloorOne-export.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/UI/Buttons/QuitButton.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/UI/Buttons/SettingsButton.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/UI/Buttons/StartButton.png</File>
@@ -19,6 +20,8 @@
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Front-Animation-Sprite.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Front-Animation-Zombie.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/HollyWater.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/JustLockedDoorFloorTwo.png</File>
+    <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/JustLookDoorFloorOne.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Left-Aniamtion-Zombie.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/Paper.png</File>
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/pixel.png</File>
@@ -32,9 +35,12 @@
     <File>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/UI/RetryButton.png</File>
   </SourceFiles>
   <DestFiles>
+    <File>Images/DoorFrameLockedFloorOne-export.png</File>
     <File>UI/QuitButton.png</File>
     <File>UI/SettingsButton.png</File>
     <File>UI/StartButton.png</File>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
