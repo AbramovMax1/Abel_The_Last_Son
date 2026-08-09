@@ -50,7 +50,6 @@ C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\HollyWater.xnb
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Paper.xnb
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\Rock.xnb
-C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\QuitButtons.xnb
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\SettingsButton.xnb
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\StartButton.xnb
 C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Abel The Last Son.exe
@@ -163,3 +162,9 @@ C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\runtimes\win-x64\nativ
 C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The.3015F2DD.Up2Date
 C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\Abel The Last Son.genruntimeconfig.cache
 C:\unity projects\Abel_The_Last_Son\abel\obj\Debug\net9.0\ref\Abel The Last Son.dll
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\pixel.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\QuitButton.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\MainMenuBackground.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Items\KeyDoor.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\BackButton.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\UI\RetryButton.xnb

@@ -76,4 +76,15 @@ public class HolyWaterWeapon : IWeapon
         
         return true;
     }
+
+    public void Reset()
+    {
+        cooldowntimer = 0f;
+
+        IReadOnlyList<HolyWaterProjectile> projectiles = ProjectilePool.Items;
+        for (int i = 0; i < projectiles.Count; i++)
+        {
+            projectiles[i].Destroy();
+        }
+    }
 }

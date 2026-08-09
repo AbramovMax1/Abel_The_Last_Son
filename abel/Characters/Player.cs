@@ -41,7 +41,10 @@ public class Player : Sprite, ICollidable, IDamageable
     private SpriteSheet backAnimation;
     private SpriteSheet rightAnimation;
     private SpriteSheet leftAnimation;
-
+    
+    // Key
+    private int keyCount = 0;
+    
     // WEAPON
     public IWeapon Weapon { get; private set; }
 
@@ -411,5 +414,41 @@ public class Player : Sprite, ICollidable, IDamageable
             
             Died?.Invoke();
         }
+    }
+
+    public void AddKeys(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+        
+        keyCount += amount;
+        
+        Console.WriteLine($"Player keys: {keyCount}");
+    }
+
+    public int GetKeyCount()
+    {
+        return keyCount;
+    }
+
+    public void ResetForNewGame()
+    {
+        Health = MaxHealth;
+        keyCount = 0;
+        damageCooldownTimer = 0f;
+        color = Color.White;
+        FacingDirection = Direction.Down;
+        spriteEffects = SpriteEffects.None;
+        currentFrame = 0;
+        animationTimer = 0f;
+        isMoving = false;
+        previousKeyboardState = new KeyboardState();
+        CurrentWalls.Clear();
+
+        ChangeAnimation(frontAnimation);
+        SetFrame(0, 0);
+        Weapon.Reset();
     }
 }

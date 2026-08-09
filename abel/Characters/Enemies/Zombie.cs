@@ -19,11 +19,18 @@ public class Zombie : Sprite , IEnemy
     private const float AnimationSpeed = 0.12f;
     private const float MovementSpeed = 110f;
     private Direction facingDirection = Direction.Down;
+    private float deathTimer = 0f;
+    private float roomEntryDelayTimer = 0f;
+    private const float DeathDuration = 0.8f;
+    private const float FadeStartTime = 0.2f;
+    
+    public bool ReadyToRemove { get; private set; } = false;
     
     // Zombie stats
     public int MaxHealth { get; } = 3;
     public int Health { get; private set; } = 3;
     public bool IsDead => Health <= 0;
+    public bool CanDealContactDamage => roomEntryDelayTimer <= 0f && !IsDead;
     public int ContactDamage { get; } = 1;
     
     // Making collider for our zombie
@@ -68,11 +75,28 @@ public class Zombie : Sprite , IEnemy
     {
         if (IsDead)
         {
+            UpdateDeathEffect(gameTime);
+            
             return;
         }
+
+        if (roomEntryDelayTimer > 0f)
+        {
+            roomEntryDelayTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            return;
+        }
+
         Console.WriteLine(transform.position);
         FollowPlayer(gameTime); // follow our player
         Animate(gameTime); // play the walk animation for the zombie
+    }
+
+    public void StartRoomEntryDelay(float seconds)
+    {
+        roomEntryDelayTimer = MathF.Max(0f, seconds);
+        animationTimer = 0f;
+        currentFrame = 0;
+        SetFrame(0, 0);
     }
 
     public void TakeDamage(int damage)
@@ -87,6 +111,8 @@ public class Zombie : Sprite , IEnemy
         if (Health <= 0)
         {
             Health = 0;
+
+            StartDeathEffect();
         }
 
         if (IsDead)
@@ -206,5 +232,38 @@ public class Zombie : Sprite , IEnemy
         animationTimer = 0f;
         SetFrame(0,0);
     }
-    
+
+    public void StartDeathEffect()
+    {
+        deathTimer = 0f;
+
+        ReadyToRemove = false;
+
+        color = Color.White;
+    }
+
+    private void UpdateDeathEffect(GameTime gameTime)
+    {
+        float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
+        deathTimer += deltaTime;
+
+        float redProgress = MathHelper.Clamp(deathTimer / FadeStartTime, 0f, 1f);
+        
+        float fadeProgress = MathHelper.Clamp((deathTimer - FadeStartTime) / (DeathDuration - FadeStartTime), 0f, 1f);
+        
+        float opacity = 1f - fadeProgress;
+        
+        Color redTint = Color.Lerp(
+            Color.White,
+            new Color(255, 60, 60),
+            redProgress);
+        
+        color = redTint * opacity;
+
+        if (deathTimer >= DeathDuration)
+        {
+            ReadyToRemove = true;
+        }
+    }
 }

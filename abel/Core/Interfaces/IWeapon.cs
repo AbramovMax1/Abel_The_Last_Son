@@ -14,4 +14,5 @@ public interface IWeapon
     
     void Update(GameTime gameTime);
     bool TryAttack(Vector2 startingPosition, Vector2 direction);
+    void Reset();
 }
