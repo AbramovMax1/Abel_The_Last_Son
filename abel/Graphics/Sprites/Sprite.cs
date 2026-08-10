@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -31,10 +32,13 @@ public class Sprite : IUpdateable, IDrawable
 
     // The sprite frame's center point.
     private Vector2 origin;
+    
+    public string SpriteName;
 
     // Every child sprite supplies the registered sprite name.
     public Sprite(string spriteName)
     {
+        SpriteName = spriteName;
         // Find the requested sprite sheet.
         spriteSheet = SpriteManager.GetSprite(spriteName);
     }
@@ -42,6 +46,7 @@ public class Sprite : IUpdateable, IDrawable
     // Start prepares the sprite's texture and first frame.
     public virtual void Start()
     {
+        Console.WriteLine(texture);
         // Get the texture from the sprite sheet.
         texture = spriteSheet.texture;
 
@@ -91,6 +96,10 @@ public class Sprite : IUpdateable, IDrawable
     // Draw this sprite using MonoGame's SpriteBatch.
     public virtual void DrawSprite(SpriteBatch spriteBatch)
     {
+        if (texture == null)
+        {
+            throw new Exception($"ERROR: The object '{SpriteName}' has a null texture! Its Start() method probably never ran.");
+        }
         // Recalculate the destination rectangle.
         destinationRectangle =
             GetDestinationRectangle(sourceRectangle);

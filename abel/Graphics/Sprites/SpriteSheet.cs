@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,6 +14,7 @@ public class SpriteSheet
     {
         get
         {
+            
             int width = texture.Width / columns; // Each small frame width.
             int height = texture.Height / rows; // Each small frame height.
 

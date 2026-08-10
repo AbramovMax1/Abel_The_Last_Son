@@ -20,7 +20,7 @@ namespace Abel_The_Last_Son;
 public class Door : Sprite, ICollidable
 {
     public int position { get; private set; }
-    private bool open;
+    public bool open {get; private set;}
     private bool locked;
     private Direction direction;
     
