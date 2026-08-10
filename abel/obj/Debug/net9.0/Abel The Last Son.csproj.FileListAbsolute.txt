@@ -183,3 +183,14 @@ C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\SFX\Hurt
 C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\SFX\ItemPickUp.xnb
 C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\SFX\ShotSound.xnb
 C:\unity projects\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\SFX\ZombieSound.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\JustLockedDoorFloorTwo.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Images\JustLookDoorFloorOne.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\Music\BackGroundMusic.ogg
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\Music\BackGroundMusic.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\SFX\DoorUnlock.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\SFX\DungenEmbianse.ogg
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\SFX\DungenEmbianse.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\SFX\HurtSound.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\SFX\ItemPickUp.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\SFX\ShotSound.xnb
+C:\Users\maxsi\RiderProjects\Abel The Last Son\Abel_The_Last_Son\abel\bin\Debug\net9.0\Content\Sound\SFX\ZombieSound.xnb

@@ -427,10 +427,7 @@ public class Game1 : Game
                     if (obj is Zombie zombie)
                     {
                         zombie.CurrentWalls = activeRoom.WallColliders;
-                        if (!zombie.IsDead)
-                        {
-                            zombie.Update(gameTime);
-                        }
+                        zombie.Update(gameTime);
                     }
                 }
             }
@@ -802,7 +799,7 @@ public class Game1 : Game
 
         for (int i = lastIndex; i >= 0; i--)
         {
-            if (zombies[i].IsDead || zombies[i].ReadyToRemove)
+            if (zombies[i].ReadyToRemove)
             {
                 sprites.Remove(zombies[i]);
                 zombies.RemoveAt(i);
@@ -814,7 +811,7 @@ public class Game1 : Game
         lastIndex = activeRoom.objectList.Count - 1;
         for (int i = lastIndex; i >= 0; i--)
         {
-            if (activeRoom.objectList[i] is Zombie zombie && (zombie.IsDead || zombie.ReadyToRemove))
+            if (activeRoom.objectList[i] is Zombie zombie && zombie.ReadyToRemove)
             {
                 // 1. Remove the zombie from the drawing list so it disappears
                 sprites.Remove(activeRoom.objectList[i]);
