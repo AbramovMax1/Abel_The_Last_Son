@@ -499,40 +499,7 @@ public class Game1 : Game
         // Draw World Colliders and Projectiles
         if (gameStarted) 
         {
-            
-            DrawCollider(player.Collider, Color.LimeGreen);
-
-            foreach (Zombie enemy in zombies)
-            {
-                if (!enemy.IsDead)
-                {
-                    DrawCollider(enemy.Collider, Color.Red);
-                }
-            }
-            
-            if (activeRoom != null)
-            {
-                foreach (Sprite obj in activeRoom.objectList)
-                {
-                    if (obj is Zombie zombie && !zombie.IsDead) 
-                    {
-                        DrawCollider(zombie.Collider, Color.Red);
-                    }
-                }
-            }
-
-            foreach (DoorKey doorKey in DoorKeys)
-            {
-                DrawCollider(doorKey.Collider, Color.Yellow);
-            }
-            
             DrawWeaponProjectiles();
-            
-            IReadOnlyList<IProjectile> projectiles = player.Weapon.Projectiles;
-            for (int i = 0; i < projectiles.Count; i++)
-            {
-                DrawCollider(projectiles[i].Collider, Color.Cyan);
-            }
         }
         
         _spriteBatch.End();

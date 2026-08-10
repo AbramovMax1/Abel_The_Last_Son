@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Abel The Last Son")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64675c363c0e1dcac1286aa959d3dc861b77d4ef")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4023484faec35498b4ea5b974d72551e4b2c0972")]
 [assembly: System.Reflection.AssemblyProductAttribute("Abel The Last Son")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Abel The Last Son")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

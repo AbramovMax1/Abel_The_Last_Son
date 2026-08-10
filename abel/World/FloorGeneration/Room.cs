@@ -378,46 +378,46 @@ public class Room : Sprite
         {
             case 0:
             {
-                tempList.Add(inisializeZombie(roomGrid[10,1]));
-                tempList.Add(inisializeZombie(roomGrid[10,5]));
-                tempList.Add(inisializeZombie(roomGrid[8,5]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
-                tempList.Add(InitializeRock(roomGrid[3,4]));
-                tempList.Add(InitializeRock(roomGrid[2,4]));
-                tempList.Add(InitializeRock(roomGrid[1,4]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[10,1]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[10,5]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[8,5]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[3,6]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[2,6]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[1,6]));
                 break;
             }
             case 1:
             {
-                tempList.Add(inisializeZombie(roomGrid[10,3]));
-                tempList.Add(inisializeZombie(roomGrid[3,5]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
-                tempList.Add(InitializeRock(roomGrid[9,6]));
-                tempList.Add(InitializeRock(roomGrid[8,6]));
-                tempList.Add(InitializeRock(roomGrid[9,6]));
-                tempList.Add(InitializeRock(roomGrid[8,6]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[10,3]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[3,5]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[9,5]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[8,5]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[9,6]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[8,6]));
                 
                 break;
             }
             case 2:
             {
-                tempList.Add(inisializeZombie(roomGrid[3,3]));
-                tempList.Add(inisializeZombie(roomGrid[10,5]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(1,15),rnd.Next(1,7)]));
-                tempList.Add(InitializeRock(roomGrid[2,5]));
-                tempList.Add(InitializeRock(roomGrid[5,2]));
-                tempList.Add(InitializeRock(roomGrid[14,5]));
-                tempList.Add(InitializeRock(roomGrid[12,1]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[3,3]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[10,5]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(1,15),rnd.Next(1,7)]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[2,5]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[5,2]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[14,5]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[12,1]));
                 break;
             }
             case 3:
             {
-                tempList.Add(inisializeZombie(roomGrid[8,2]));
-                tempList.Add(inisializeZombie(roomGrid[14,2]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[8,2]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[14,2]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(15),rnd.Next(7)]));
                 break;
             }
         }
@@ -427,37 +427,32 @@ public class Room : Sprite
         return tempList;
     }
 
-    private NotColletiblesPaper inisializepPaper(Vector2 position)
+    private T InitializeEntity<T>(T entity, Vector2 position) where T : Sprite
     {
-        NotColletiblesPaper paper = new NotColletiblesPaper();
-        paper.Start();
-        paper.transform.position = position;
-        return paper;
-    }
-    private Rock InitializeRock(Vector2 position)
-    {
-        Rock rock = new Rock();
-        rock.Start();
-        rock.transform.position = position;
+        // 1. Handle common logic that applies to EVERY entity
+        entity.Start();
+        entity.transform.position = position;
 
-        // ADD THIS: Register the rock's collider as a wall so the player slides against it!
-        WallColliders.Add(rock.Collider);
-
-        return rock;
-    }
-    private Zombie inisializeZombie(Vector2 position)
-    {
-        Zombie zombie = new Zombie(currentPlayer);
-        zombie.Start();
-        zombie.transform.position = position;
-        enemyAmount++;
-
-        zombie.OnDeath += () =>
+        // 2. Handle specific logic based on the type of the entity
+        switch (entity)
         {
-            enemyAmount--;
-            Console.WriteLine($"resived on death, enemy amount is  {enemyAmount}");
-        };
-        return zombie;
+            case Rock rock:
+                // Register the rock's collider as a wall
+                WallColliders.Add(rock.Collider);
+                break;
+
+            case Zombie zombie:
+                // Handle enemy tracking and death events
+                enemyAmount++;
+                zombie.OnDeath += () =>
+                {
+                    enemyAmount--;
+                    Console.WriteLine($"received on death, enemy amount is {enemyAmount}");
+                };
+                break;
+        }
+
+        return entity;
     }
 
     public override void DrawSprite(SpriteBatch spriteBatch)
