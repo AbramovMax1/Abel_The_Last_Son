@@ -244,10 +244,6 @@ public class Floor
                     currentRoomAmount++;
                     generatedRoom = true;
                     
-
-                
-
-                   
                 }
 
                 if (!generatedRoom)
@@ -256,7 +252,7 @@ public class Floor
                 }
                 generatedRoom = false;
 
-                PrintRoomArray();
+                
 
             }
             
@@ -265,24 +261,52 @@ public class Floor
                 Console.WriteLine("not enough rooms generated restarting generation ");
                 continue;
             }
-            
-            foreach (Room room in roomArray) //checks for end rooms and marks them 
+            bool lockedRoomAssigned = false;
+            foreach (Room room in roomArray) // checks for end rooms and marks them 
             {
                 if (room == null) continue;
                 int doorCount = 0;
+                int doorDirectionIndex = -1;
+    
                 for (int i = 0; i < 4; i++)
                 {
-                    if (room.doors[i] != null) doorCount++;
-
+                    if (room.doors[i] != null)
+                    {
+                        doorCount++;
+                        doorDirectionIndex = i;
+                    }
                 }
 
                 if (!room.isStartRoom && doorCount == 1)
                 {
-                    room.ChangeRoomType(Room.RoomType.EndRoom);
+                    if (!lockedRoomAssigned)
+                    {
+                        room.ChangeRoomType(Room.RoomType.LockedEndRoom);
+            
+                        if (doorDirectionIndex != -1)
+                        {
+                            DirectionConvertor(doorDirectionIndex, room, out int neighborRow, out int neighborCol);
+                            Room adjacentRoom = GetRoomAt(neighborCol, neighborRow);
+                
+                            if (adjacentRoom != null)
+                            {
+                                int oppositeDirection = (doorDirectionIndex + 2) % 4;
+                                Direction oppDir = TransferIntToDirection(oppositeDirection);
+                                if (adjacentRoom.doors[oppositeDirection] != null)
+                                {
+                                    adjacentRoom.LockDoor(oppDir);
+                                }
+                            }
+                        }
+            
+                        lockedRoomAssigned = true;
+                    }
+                    else
+                    {
+                        room.ChangeRoomType(Room.RoomType.EndRoom);
+                    }
                     endRoomQueue.Enqueue(room);
-
                 }
-
             }
 
             if (endRoomQueue.Count < 3)
@@ -300,6 +324,7 @@ public class Floor
                 room.FinnishedRoomGeneration();
             }
         }
+        PrintRoomArray();
         return this;
     }
 

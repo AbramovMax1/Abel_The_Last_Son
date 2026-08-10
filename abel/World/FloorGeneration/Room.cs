@@ -29,13 +29,17 @@ public class Room : Sprite
     // door sprite
     private string doorSpriteName;
     private string lockedDoorSpriteName;
+    private string closedSpriteName;
+    private string openSpriteName; 
+    public string lockedSpriteName { get; private set; }
 
     private const int scale = 15;
 
     public enum RoomType
     {
         bacicRoom,
-        EndRoom
+        EndRoom,
+        LockedEndRoom
     }
 
     private Vector2[,] roomGrid;
@@ -50,11 +54,15 @@ public class Room : Sprite
         {
             return $"E at {row}, {collumn}";
         }
+        else if (currentRoom == RoomType.LockedEndRoom)
+        {
+            return $"LE at {row}, {collumn}";
+        }
         else if (currentRoom == RoomType.bacicRoom)
         {
             return $"B at {row}, {collumn}";
         }
-        else return $"{currentRoom.ToString()} at {row}, {collumn}";
+        else return $"{currentRoom.ToString()} at {row}, {collumn}";    
 
     }
     
@@ -120,21 +128,37 @@ public class Room : Sprite
 
     public override void Update(GameTime gameTime)
     {
-        if (enemyAmount <= 0)
+        foreach (var door in doors)
         {
-            foreach (var door in doors)
+            if (door == null) continue;
+
+            if (door.locked)
             {
-                if (door != null) door.Open();
+                // Create an expanded interaction boundary so touching/pressing against the door triggers it
+                Rectangle interactionBox = door.Collider;
+                interactionBox.Inflate(8, 8); // Expands the detection box by 8 pixels in all directions
+
+                // Check if player interacts with the locked door and has at least one key
+                if (currentPlayer != null && interactionBox.Intersects(currentPlayer.Collider))
+                {
+                    if (currentPlayer.GetKeyCount() > 0)
+                    {
+                        currentPlayer.UseKey(); // Consumes a key
+                        door.Unlock(); // Unlocks and opens the door
+                        Game1.doorUnlockSound.Play();
+                    }
+                }
+            }
+            else if (enemyAmount <= 0)
+            {
+                door.Open();
+            }
+            else
+            {
+                door.Close();
             }
         }
-        else
-        {
-           
-            foreach (var door in doors)
-            {
-                if (door != null) door.Close();
-            } 
-        }
+
         base.Update(gameTime);
     }
 
@@ -241,15 +265,17 @@ public class Room : Sprite
     public void AddDoor(Direction direction, bool doorExist)
     {
         if (!doorExist) return;
-        if (isStartRoom)
-        {
-            doors[DirectionToNumber(direction)] = new Door(direction, doorSpriteName, true);
-        }
-        else
-        {
-            doors[DirectionToNumber(direction)] = new Door(direction, doorSpriteName, false);
-        }
+        bool isOpen = isStartRoom;
+        doors[DirectionToNumber(direction)] = new Door(direction, closedSpriteName, openSpriteName, lockedSpriteName, isOpen, false);
         doors[DirectionToNumber(direction)].Start();
+    }
+    public void LockDoor(Direction direction)
+    {
+        int index = DirectionToNumber(direction);
+        if (index >= 0 && doors[index] != null)
+        {
+            doors[index].ConvertToLocked(lockedSpriteName);
+        }
     }
 
     public void ChangeRoomType(RoomType newRoomType)
@@ -264,17 +290,23 @@ public class Room : Sprite
         {
             case Floor.Difficulty.Easy:
             {
-                doorSpriteName = "DoorOneLocked";
+                closedSpriteName = "CloseDoorOne";
+                openSpriteName = "OpenDoorOne";
+                lockedSpriteName = "DoorOneLocked";
                 break;
             }
             case Floor.Difficulty.Medium:
             {
-                doorSpriteName = "DoorTwoLocked";
+                closedSpriteName = "CloseDoorTwo";
+                openSpriteName = "OpenDoorTwo";
+                lockedSpriteName = "DoorTwoLocked";
                 break;
             }
             case Floor.Difficulty.Hard:
             {
-                doorSpriteName = "DoorOneLocked";
+                closedSpriteName = "CloseDoorOne";
+                openSpriteName = "OpenDoorOne";
+                lockedSpriteName = "DoorOneLocked";
                 break;
             }
         }
@@ -346,46 +378,46 @@ public class Room : Sprite
         {
             case 0:
             {
-                tempList.Add(inisializeZombie(roomGrid[10,1]));
-                tempList.Add(inisializeZombie(roomGrid[10,6]));
-                tempList.Add(inisializeZombie(roomGrid[2,6]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
-                tempList.Add(InitializeRock(roomGrid[3,2]));
-                tempList.Add(InitializeRock(roomGrid[2,2]));
-                tempList.Add(InitializeRock(roomGrid[1,2]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[10,1]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[10,5]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[8,5]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[3,6]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[2,6]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[1,6]));
                 break;
             }
             case 1:
             {
-                tempList.Add(inisializeZombie(roomGrid[10,3]));
-                tempList.Add(inisializeZombie(roomGrid[3,5]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
-                tempList.Add(InitializeRock(roomGrid[9,6]));
-                tempList.Add(InitializeRock(roomGrid[8,6]));
-                tempList.Add(InitializeRock(roomGrid[9,6]));
-                tempList.Add(InitializeRock(roomGrid[8,6]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[10,3]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[3,5]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[9,5]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[8,5]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[9,6]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[8,6]));
                 
                 break;
             }
             case 2:
             {
-                tempList.Add(inisializeZombie(roomGrid[3,3]));
-                tempList.Add(inisializeZombie(roomGrid[10,5]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(1,15),rnd.Next(1,7)]));
-                tempList.Add(InitializeRock(roomGrid[2,5]));
-                tempList.Add(InitializeRock(roomGrid[5,2]));
-                tempList.Add(InitializeRock(roomGrid[14,5]));
-                tempList.Add(InitializeRock(roomGrid[12,1]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[3,3]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[10,5]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(1,15),rnd.Next(1,7)]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[2,5]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[5,2]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[14,5]));
+                tempList.Add(InitializeEntity(new Rock(),roomGrid[12,1]));
                 break;
             }
             case 3:
             {
-                tempList.Add(inisializeZombie(roomGrid[8,2]));
-                tempList.Add(inisializeZombie(roomGrid[14,2]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
-                tempList.Add(inisializepPaper(roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[8,2]));
+                tempList.Add(InitializeEntity(new Zombie(currentPlayer),roomGrid[14,2]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(15),rnd.Next(7)]));
+                tempList.Add(InitializeEntity(new NotColletiblesPaper(),roomGrid[rnd.Next(15),rnd.Next(7)]));
                 break;
             }
         }
@@ -395,37 +427,32 @@ public class Room : Sprite
         return tempList;
     }
 
-    private NotColletiblesPaper inisializepPaper(Vector2 position)
+    private T InitializeEntity<T>(T entity, Vector2 position) where T : Sprite
     {
-        NotColletiblesPaper paper = new NotColletiblesPaper();
-        paper.Start();
-        paper.transform.position = position;
-        return paper;
-    }
-    private Rock InitializeRock(Vector2 position)
-    {
-        Rock rock = new Rock();
-        rock.Start();
-        rock.transform.position = position;
+        // 1. Handle common logic that applies to EVERY entity
+        entity.Start();
+        entity.transform.position = position;
 
-        // ADD THIS: Register the rock's collider as a wall so the player slides against it!
-        WallColliders.Add(rock.Collider);
-
-        return rock;
-    }
-    private Zombie inisializeZombie(Vector2 position)
-    {
-        Zombie zombie = new Zombie(currentPlayer);
-        zombie.Start();
-        zombie.transform.position = position;
-        enemyAmount++;
-
-        zombie.OnDeath += () =>
+        // 2. Handle specific logic based on the type of the entity
+        switch (entity)
         {
-            enemyAmount--;
-            Console.WriteLine($"resived on death, enemy amount is  {enemyAmount}");
-        };
-        return zombie;
+            case Rock rock:
+                // Register the rock's collider as a wall
+                WallColliders.Add(rock.Collider);
+                break;
+
+            case Zombie zombie:
+                // Handle enemy tracking and death events
+                enemyAmount++;
+                zombie.OnDeath += () =>
+                {
+                    enemyAmount--;
+                    Console.WriteLine($"received on death, enemy amount is {enemyAmount}");
+                };
+                break;
+        }
+
+        return entity;
     }
 
     public override void DrawSprite(SpriteBatch spriteBatch)

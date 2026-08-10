@@ -416,6 +416,7 @@ public class Player : Sprite, ICollidable, IDamageable
         }
         
         Health -= damage;
+        Game1.hurtSound.Play();
 
         if (Health <= 0)
         {
@@ -441,6 +442,17 @@ public class Player : Sprite, ICollidable, IDamageable
         }
         
         keyCount += amount;
+        
+        Console.WriteLine($"Player keys: {keyCount}");
+    }
+    public void UseKey()
+    {
+        if (GetKeyCount() <= 0)
+        {
+            return;
+        }
+        
+        keyCount -= 1;
         
         Console.WriteLine($"Player keys: {keyCount}");
     }

@@ -12,16 +12,14 @@ using Abel_The_Last_Son.Enemies;
 using Abel_The_Last_Son.Manager;
 using Abel_The_Last_Son.World.Doors;
 using Abel_The_Last_Son.World.Trash;
+using Abel_The_Last_Son.Items;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Abel_The_Last_Son;
 
 public class Game1 : Game
 {
-    //temp
-    // At the top of your class
-    private Vector2[,] roomGrid;
-    private const float CellWidth = 64f;  // Adjust to your actual tile size
-    private const float CellHeight = 64f;
     
     // =========== references =============
     private GraphicsDeviceManager _graphics;
@@ -39,6 +37,18 @@ public class Game1 : Game
 
     private bool gameOver = false;
 
+    private const float RoomEntryZombieDelay = 0.8f;
+
+    // ============ 
+    // Audio Assets
+    private Song mainMenuMusic;
+    private Song dungeonAmbiance;
+    public static SoundEffect itemPickUpSound;
+    public static SoundEffect doorUnlockSound;
+    public static SoundEffect shootSound;
+    public static SoundEffect zombieSound;
+    public static SoundEffect hurtSound;
+    
     // ============
     // KeyBinds
     private KeyboardState previousCombatKeyboard;
@@ -78,7 +88,13 @@ public class Game1 : Game
     private Buttons startingButton;
     private Buttons SettingsButton;
     private Buttons QuitButton;
-
+    private Buttons retryButton;
+    private Buttons backButton;
+    
+    // =============
+    // UI
+    private Texture2D mainMenuBackgroundTexture;
+    
     // ==========
     // sorting order sprit
     private List<Sprite> sprites = new List<Sprite>();
@@ -93,7 +109,10 @@ public class Game1 : Game
     // HeartUI
     private Texture2D heartTexture;
   
-    
+    //=========
+    // Items
+    private Texture2D keyTexture;
+    private readonly List<DoorKey> DoorKeys = new List<DoorKey>();
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -152,6 +171,10 @@ public class Game1 : Game
         RightDoorLocked();
         SpriteManager.AddSprite("DoorOneLocked", "Images/DoorFrameLockedFloorOne-export");
         SpriteManager.AddSprite("DoorTwoLocked", "Images/DoorFrameLockedFlootTwo");
+        SpriteManager.AddSprite("CloseDoorOne", "Images/JustLookDoorFloorOne");
+        SpriteManager.AddSprite("CloseDoorTwo", "Images/JustLockedDoorFloorTwo");
+        SpriteManager.AddSprite("OpenDoorOne", "Images/DoorFrameUnlockedFloorOne-export");
+        SpriteManager.AddSprite("OpenDoorTwo", "Images/DoorFrameUnlockedFloorTwo");
         
         
         // Characters
@@ -161,9 +184,9 @@ public class Game1 : Game
         PlayerRightAnimation(); // player right animation 
 
         // ============
-        // UI - Buttons
+        // UI 
         // ============
-
+        MainMenuBackground(); // backgornd for the main menu 
         UiButtonsSprite(); // UI buttons sprite 
         
         
@@ -177,7 +200,31 @@ public class Game1 : Game
         //=============
         HolyWaterSprite();
         
-
+        //=============
+        // Items
+        //=============
+        DoorKeySprite();
+        
+        mainMenuMusic = Content.Load<Song>("Sound/Music/BackGroundMusic");
+        dungeonAmbiance = Content.Load<Song>("Sound/SFX/DungenEmbianse");
+        itemPickUpSound = Content.Load<SoundEffect>("Sound/SFX/ItemPickUp");
+        doorUnlockSound = Content.Load<SoundEffect>("Sound/SFX/DoorUnlock");
+        shootSound = Content.Load<SoundEffect>("Sound/SFX/ShotSound");
+        zombieSound = Content.Load<SoundEffect>("Sound/SFX/ZombieSound");
+        hurtSound = Content.Load<SoundEffect>("Sound/SFX/HurtSound");
+        
+        // make it so that the sound will not be so loud
+        MediaPlayer.Volume = 0.3f;
+        
+        // To play it on loop:
+        MediaPlayer.Play(dungeonAmbiance);
+        MediaPlayer.IsRepeating = true;
+        
+        // Start Main Menu Music on loop
+       
+        MediaPlayer.Play(mainMenuMusic);
+        MediaPlayer.IsRepeating = true;
+        
         
         Start();
     }
@@ -222,6 +269,12 @@ public class Game1 : Game
     {
         SpriteManager.AddSprite("AbelRightAnimation", "Images/Right-Animation-Player", 4, 1);
     }
+
+    void MainMenuBackground()
+    {
+        mainMenuBackgroundTexture = Content.Load<Texture2D>("UI/MainMenuBackground");
+    }
+    
     void UiButtonsSprite()
     {
         // ======== UI buttons
@@ -232,7 +285,9 @@ public class Game1 : Game
         SpriteManager.AddSprite("SettingsButton", "UI/SettingsButton");
         
         // quitButton
-        SpriteManager.AddSprite("QuitButton", "UI/QuitButtons");
+        SpriteManager.AddSprite("QuitButton", "UI/QuitButton");
+        SpriteManager.AddSprite("RetryButton", "UI/RetryButton");
+        SpriteManager.AddSprite("BackButton", "UI/BackButton");
     }
 
     void HeartUI()
@@ -240,6 +295,15 @@ public class Game1 : Game
         SpriteManager.AddSprite("HeartUI", "UI/Heart");
         heartTexture =
             SpriteManager.GetSprite("HeartUI").texture;
+    }
+    
+    private void DoorKeySprite()
+    {
+       
+        SpriteManager.AddSprite("DoorKey", "Items/KeyDoor");
+
+        
+        keyTexture = SpriteManager.GetSprite("DoorKey").texture;
     }
     
     void Start()
@@ -250,6 +314,7 @@ public class Game1 : Game
         StartGame();
         SettingsBtttonOnClick();
         QuitGame();
+        CreateDeathMenuButtons();
         
         //heart
         HeartUI();
@@ -273,12 +338,7 @@ public class Game1 : Game
 
         player.Died += HandlePlayerDeath;
         
-        // zombie
-        //zombie = new Zombie(player);
-        //zombie.Start();
-        //zombies.Add(zombie); // add the zombie into the list 
-        //sprites.Add(zombie); // add zombie into the sprite list 
- 
+       
         // The list will use sortingOrder to decide what draws first.
         sprites.Add(floorOne);
         sprites.Add(notColletiblesPaper);
@@ -296,43 +356,7 @@ public class Game1 : Game
 
         startingButton.SetTexture(SpriteManager.GetSprite("StartButton").texture);
 
-        startingButton.OnClick += () =>
-        {
-            gameStarted = true;
-            IsMouseVisible = false;
-
-            currentFloor = new Floor();
-            currentFloor.generateFloor(Floor.Difficulty.Easy, player);
-            
-            // Loop through all the rooms the floor just generated
-            foreach (Sprite sprite in currentFloor.GetRoomSprites())
-            {
-                // 1. ADD THE ROOM TO THE DRAW LIST!
-                sprites.Add(sprite);
-
-                // 2. Find the starting room
-                if (sprite is Room room)
-                {
-                    if (room.isStartRoom) activeRoom = room;
-                    // Note: We removed the "break;" here so the loop 
-                    // continues and adds ALL the rooms to the sprites list!
-                    foreach (Sprite obj in room.objectList)
-                    {
-                        sprites.Add(obj);
-                    }
-                }
-                
-            }
-
-            if (activeRoom != null)
-            {
-                // Center player in the starting room
-                player.transform.position = activeRoom.transform.position;
-                
-                // Snap the camera directly to the starting room 
-                camera.Position = activeRoom.transform.position;
-            }
-        };
+        startingButton.OnClick += BeginNewRun;
     }
     
     void SettingsBtttonOnClick()
@@ -357,6 +381,17 @@ public class Game1 : Game
         {
             Exit();
         };
+    }
+
+    private void CreateDeathMenuButtons()
+    {
+        retryButton = new Buttons(GraphicsDevice, new Rectangle(760, 400, 400, 100));
+        retryButton.SetTexture(SpriteManager.GetSprite("RetryButton").texture);
+        retryButton.OnClick += BeginNewRun;
+
+        backButton = new Buttons(GraphicsDevice, new Rectangle(760, 530, 400, 100));
+        backButton.SetTexture(SpriteManager.GetSprite("BackButton").texture);
+        backButton.OnClick += ReturnToMainMenu;
     }
 
     protected override void Update(GameTime gameTime)
@@ -405,6 +440,8 @@ public class Game1 : Game
                 
             player.Update(gameTime);
             
+            CheckDoorKeyCollection();
+            
             HandlePlayerAttack();
             
             foreach (Zombie enemy in zombies)
@@ -418,7 +455,12 @@ public class Game1 : Game
             
             CheckEnemyPlayerCollisions();
         }
-        else if (!gameStarted)
+        else if (gameStarted && gameOver)
+        {
+            retryButton.Update();
+            backButton.Update();
+        }
+        else
         {
             startingButton.Update();
             SettingsButton.Update();
@@ -457,35 +499,7 @@ public class Game1 : Game
         // Draw World Colliders and Projectiles
         if (gameStarted) 
         {
-            
-            DrawCollider(player.Collider, Color.LimeGreen);
-
-            foreach (Zombie enemy in zombies)
-            {
-                if (!enemy.IsDead)
-                {
-                    DrawCollider(enemy.Collider, Color.Red);
-                }
-            }
-            
-            if (activeRoom != null)
-            {
-                foreach (Sprite obj in activeRoom.objectList)
-                {
-                    if (obj is Zombie zombie && !zombie.IsDead) 
-                    {
-                        DrawCollider(zombie.Collider, Color.Red);
-                    }
-                }
-            }
-            
             DrawWeaponProjectiles();
-            
-            IReadOnlyList<IProjectile> projectiles = player.Weapon.Projectiles;
-            for (int i = 0; i < projectiles.Count; i++)
-            {
-                DrawCollider(projectiles[i].Collider, Color.Cyan);
-            }
         }
         
         _spriteBatch.End();
@@ -500,21 +514,47 @@ public class Game1 : Game
         
         if (!gameStarted)
         {
+            Rectangle backgroundRectangle = new Rectangle(
+                0,
+                0,
+                GraphicsDevice.Viewport.Width,
+                GraphicsDevice.Viewport.Height);
+            
+            _spriteBatch.Draw(
+                mainMenuBackgroundTexture,
+                backgroundRectangle,
+                Color.White);
+            
+            
             startingButton.Draw(_spriteBatch);
             SettingsButton.Draw(_spriteBatch);
             QuitButton.Draw(_spriteBatch);
         }
+        else if (gameOver)
+        {
+            Rectangle darkOverlay = new Rectangle(
+                0,
+                0,
+                GraphicsDevice.Viewport.Width,
+                GraphicsDevice.Viewport.Height);
+
+            _spriteBatch.Draw(debugPixel, darkOverlay, Color.Black * 0.70f);
+            retryButton.Draw(_spriteBatch);
+            backButton.Draw(_spriteBatch);
+        }
         else
         {
             DrawPlayerHealth();
+            
+            DrawPlayerKeys();
         }
         
         _spriteBatch.End();
 
         base.Draw(gameTime);
     }
- 
-    public void DrawCollider(Rectangle rectangle, Color color)
+
+    private void DrawCollider(Rectangle rectangle, Color color)
     {
         int thickness = 3; // this is the thickness of the collider
         
@@ -542,73 +582,88 @@ public class Game1 : Game
             color);
         
     }
-    
     private void CheckRoomTransitions()
+{
+    if (activeRoom == null) return;
+
+    // Loop through all 4 doors of the current room
+    for (int i = 0; i < 4; i++)
     {
-        if (activeRoom == null) return;
-
-        // Loop through all 4 doors of the current room
-        for (int i = 0; i < 4; i++)
+        Door door = activeRoom.doors[i];
+        
+        if (door != null && door.Collider.Intersects(player.Collider)) 
         {
-            Door door = activeRoom.doors[i];
-            
-            // Check if door exists, is open (or unlocked), and touches player
-            // You can add `&& door.open` if you want to ensure locked doors don't trigger!
-            if (door != null && door.Collider.Intersects(player.Collider) && door.open) 
+            int nextCol = activeRoom.collumn;
+            int nextRow = activeRoom.row;
+            int oppositeDoorIndex = 0;
+            Vector2 spawnOffset = Vector2.Zero;
+
+            // Figure out which way we are going on the grid based on the door hit
+            switch (i)
             {
-                int nextCol = activeRoom.collumn;
-                int nextRow = activeRoom.row;
-                int oppositeDoorIndex = 0;
-                Vector2 spawnOffset = Vector2.Zero;
-
-                // Figure out which way we are going on the grid based on the door hit
-                switch (i)
-                {
-                    case 0: // Went UP
-                        nextRow += 1;
-                        oppositeDoorIndex = 2; // Arrive at DOWN door
-                        spawnOffset = new Vector2(0, -250); // Push slightly UP into the room
-                        break;
-                    case 1: // Went RIGHT
-                        nextCol += 1;
-                        oppositeDoorIndex = 3; // Arrive at LEFT door
-                        spawnOffset = new Vector2(250, 0); // Push slightly RIGHT into the room
-                        break;
-                    case 2: // Went DOWN
-                        nextRow -= 1;
-                        oppositeDoorIndex = 0; // Arrive at UP door
-                        spawnOffset = new Vector2(0, 250); // Push slightly DOWN into the room
-                        break;
-                    case 3: // Went LEFT
-                        nextCol -= 1;
-                        oppositeDoorIndex = 1; // Arrive at RIGHT door
-                        spawnOffset = new Vector2(-250, 0); // Push slightly LEFT into the room
-                        break;
-                }
-
-                // Get the next room from the floor array
-                Room nextRoom = currentFloor.GetRoomAt(nextCol, nextRow);
-
-                if (nextRoom != null)
-                {
-                    // Update active room
-                    activeRoom = nextRoom;
-
-                    // Move player to the new door and apply the offset so they aren't stuck inside the door
-                    Door arrivalDoor = activeRoom.doors[oppositeDoorIndex];
-                    if (arrivalDoor != null)
-                    {
-                        player.transform.position = arrivalDoor.transform.position + spawnOffset;
-                    }
-
-                    // Move the Camera to center on the new room!
-                    camera.Position = activeRoom.transform.position;
+                case 0: // Went UP
+                    nextRow += 1;
+                    oppositeDoorIndex = 2; 
+                    spawnOffset = new Vector2(0, -250); 
                     break;
+                case 1: // Went RIGHT
+                    nextCol += 1;
+                    oppositeDoorIndex = 3; 
+                    spawnOffset = new Vector2(250, 0); 
+                    break;
+                case 2: // Went DOWN
+                    nextRow -= 1;
+                    oppositeDoorIndex = 0; 
+                    spawnOffset = new Vector2(0, 250); 
+                    break;
+                case 3: // Went LEFT
+                    nextCol -= 1;
+                    oppositeDoorIndex = 1; 
+                    spawnOffset = new Vector2(-250, 0); 
+                    break;
+            }
+
+            // Get the next room from the floor array
+            Room nextRoom = currentFloor.GetRoomAt(nextCol, nextRow);
+
+            if (nextRoom != null)
+            {
+                // 1. Remove old room's objects from the global draw list
+                foreach (Sprite obj in activeRoom.objectList)
+                {
+                    sprites.Remove(obj);
+                    if (obj is Zombie zombie)
+                    {
+                        zombie.StopSound();
+                    }
                 }
+
+                // Update active room
+                activeRoom = nextRoom;
+
+                // 2. Add new room's objects to the global draw list so they render!
+                foreach (Sprite obj in activeRoom.objectList)
+                {
+                    sprites.Add(obj);
+                }
+
+                // If it's a new room with enemies, trigger their spawn delay
+                StartRoomEnemyDelay(activeRoom);
+
+                // Move player to the new door and apply offset
+                Door arrivalDoor = activeRoom.doors[oppositeDoorIndex];
+                if (arrivalDoor != null)
+                {
+                    player.transform.position = arrivalDoor.transform.position + spawnOffset;
+                }
+
+                // Move the Camera to center on the new room!
+                camera.Position = activeRoom.transform.position;
+                break;
             }
         }
     }
-
+}
     private void ZombieAnimation()
     {
         SpriteManager.AddSprite("ZombieFrontAnimation", "Images/Front-Animation-Zombie", 4, 2);
@@ -621,7 +676,7 @@ public class Game1 : Game
     {
         foreach (Zombie enemy in zombies)
         {
-            if (enemy.IsDead)
+            if (!enemy.CanDealContactDamage)
             {
                 continue;
             }
@@ -640,7 +695,7 @@ public class Game1 : Game
             {
                 if (obj is Zombie zombie)
                 {
-                    if (zombie.IsDead) continue;
+                    if (!zombie.CanDealContactDamage) continue;
                     if (zombie.Collider.Intersects(player.Collider))
                     {
                         player.TakeDamage(zombie.ContactDamage);
@@ -663,7 +718,11 @@ public class Game1 : Game
 
             bool shotWasCreated = player.Weapon.TryAttack(player.transform.position, shootingDirection);
 
-            if (!shotWasCreated)
+            if (shotWasCreated)
+            {
+                shootSound.Play(0.4f, 0.0f, 0.0f); // Add this line
+            }
+            else
             {
                 Console.WriteLine("Holy water could not fire");
             }
@@ -743,10 +802,9 @@ public class Game1 : Game
 
         for (int i = lastIndex; i >= 0; i--)
         {
-            if (zombies[i].IsDead)
+            if (zombies[i].IsDead || zombies[i].ReadyToRemove)
             {
                 sprites.Remove(zombies[i]);
-                
                 zombies.RemoveAt(i);
             }
         }
@@ -756,11 +814,11 @@ public class Game1 : Game
         lastIndex = activeRoom.objectList.Count - 1;
         for (int i = lastIndex; i >= 0; i--)
         {
-            if (activeRoom.objectList[i] is Zombie zombie && zombie.IsDead)
+            if (activeRoom.objectList[i] is Zombie zombie && (zombie.IsDead || zombie.ReadyToRemove))
             {
                 // 1. Remove the zombie from the drawing list so it disappears
                 sprites.Remove(activeRoom.objectList[i]);
-            
+        
                 // 2. Remove the zombie from the room's active logic list
                 activeRoom.objectList.RemoveAt(i);
             }
@@ -789,5 +847,161 @@ public class Game1 : Game
         gameOver = true;
         IsMouseVisible = true;
         Console.WriteLine("Game Over");
+    }
+
+    private void BeginNewRun()
+    {
+        ClearPreviousRun();
+        player.ResetForNewGame();
+        
+        MediaPlayer.Play(dungeonAmbiance);
+        MediaPlayer.IsRepeating = true;
+        
+        gameStarted = true;
+        gameOver = false;
+        IsMouseVisible = false;
+        previousCombatKeyboard = new KeyboardState();
+
+        currentFloor = new Floor();
+        currentFloor.generateFloor(Floor.Difficulty.Easy, player);
+
+        foreach (Sprite sprite in currentFloor.GetRoomSprites())
+        {
+            sprites.Add(sprite);
+
+            if (sprite is Room room)
+            {
+                if (room.isStartRoom)
+                {
+                    activeRoom = room;
+                    
+                    foreach (Sprite obj in room.objectList)
+                    {
+                        sprites.Add(obj);
+                    }
+
+                }
+            }
+        }
+
+        if (activeRoom != null)
+        {
+            player.transform.position = activeRoom.transform.position;
+            camera.Position = activeRoom.transform.position;
+            StartRoomEnemyDelay(activeRoom);
+
+            Vector2 keyPosition = activeRoom.transform.position + new Vector2(250f, 0f);
+            SpawnDoorKey(keyPosition);
+        }
+    }
+
+    private void StartRoomEnemyDelay(Room room)
+    {
+        foreach (Sprite obj in room.objectList)
+        {
+            if (obj is Zombie enemy)
+            {
+                enemy.StartRoomEntryDelay(RoomEntryZombieDelay);
+            }
+        }
+    }
+
+    
+    private void ClearPreviousRun()
+    {
+        for (int i = DoorKeys.Count - 1; i >= 0; i--)
+        {
+            sprites.Remove(DoorKeys[i]);
+        }
+        DoorKeys.Clear();
+
+        if (currentFloor != null)
+        {
+            foreach (Sprite sprite in currentFloor.GetRoomSprites())
+            {
+                if (sprite is Room room)
+                {
+                    // Change 'Zombie enemy' to 'Sprite obj' to prevent the InvalidCastException
+                    foreach (Sprite obj in room.objectList)
+                    {
+                        sprites.Remove(obj);
+                        if (obj is Zombie zombie)
+                        {
+                            zombie.StopSound();
+                        }
+                    }
+                }
+
+                sprites.Remove(sprite);
+            }
+        }
+
+        for (int i = zombies.Count - 1; i >= 0; i--)
+        {
+            sprites.Remove(zombies[i]);
+        }
+        zombies.Clear();
+
+        activeRoom = null;
+        currentFloor = null;
+    }
+
+    private void ReturnToMainMenu()
+    {
+        ClearPreviousRun();
+        player.ResetForNewGame();
+        
+        MediaPlayer.Play(mainMenuMusic);
+        MediaPlayer.IsRepeating = true;
+        
+        gameStarted = false;
+        gameOver = false;
+        IsMouseVisible = true;
+    }
+    
+    private void SpawnDoorKey(Vector2 position)
+    {
+        DoorKey doorKey = new DoorKey(position);
+        
+        doorKey.Start();
+        DoorKeys.Add(doorKey);
+        sprites.Add(doorKey);
+    }
+
+    private void CheckDoorKeyCollection()
+    {
+        for (int i = DoorKeys.Count - 1; i >= 0; i--)
+        {
+            DoorKey doorKey = DoorKeys[i];
+            
+            bool playerTouchedKey = player.Collider.Intersects(doorKey.Collider);
+
+            if (!playerTouchedKey)
+            {
+                continue;
+            }
+            
+            doorKey.Collect(player);
+            Game1.itemPickUpSound.Play();
+            sprites.Remove(doorKey);
+            DoorKeys.RemoveAt(i);
+        }
+    }
+
+    private void DrawPlayerKeys()
+    {
+        int numberOfKeys = player.GetKeyCount();
+
+        for (int i = 0; i < numberOfKeys; i++)
+        {
+            int x = 30 + i * 50;
+            int y = 110;
+
+            int size = 40;
+            
+            Rectangle keyRectangle = new Rectangle(x, y, size, size);
+            
+            _spriteBatch.Draw(keyTexture, keyRectangle, Color.White);
+        }
     }
 }

@@ -13,54 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin ../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/Doors/FloorOne/DoorFrameLockedFloorOne-export.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/Doors/FloorOne/DoorFrameLockedFloorOne-export.png;Images/DoorFrameLockedFloorOne-export.png
-
-#begin ../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/UI/Buttons/QuitButton.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/UI/Buttons/QuitButton.png;UI/QuitButton.png
-
-#begin ../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/UI/Buttons/SettingsButton.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/UI/Buttons/SettingsButton.png;UI/SettingsButton.png
-
-#begin ../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/UI/Buttons/StartButton.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../../../../../OneDrive/Desktop/Unity/Sprites/Pixel art/UI/Buttons/StartButton.png;UI/StartButton.png
-
 #begin Images/AbelPlayerNew.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -313,6 +265,48 @@
 /processorParam:TextureFormat=Color
 /build:Items/KeyDoor.png
 
+#begin Sound/Music/BackGroundMusic.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sound/Music/BackGroundMusic.mp3;Sound/Music/BackGroundMusic
+
+#begin Sound/SFX/DoorUnlock.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/SFX/DoorUnlock.wav;Sound/SFX/DoorUnlock
+
+#begin Sound/SFX/DungenEmbianse.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sound/SFX/DungenEmbianse.mp3;Sound/SFX/DungenEmbianse
+
+#begin Sound/SFX/HurtSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/SFX/HurtSound.wav;Sound/SFX/HurtSound
+
+#begin Sound/SFX/ItemPickUp.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/SFX/ItemPickUp.wav;Sound/SFX/ItemPickUp
+
+#begin Sound/SFX/ShotSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/SFX/ShotSound.wav;Sound/SFX/ShotSound
+
+#begin Sound/SFX/ZombieSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/SFX/ZombieSound.wav;Sound/SFX/ZombieSound
+
 #begin UI/BackButton.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -349,6 +343,18 @@
 /processorParam:TextureFormat=Color
 /build:UI/MainMenuBackground.png
 
+#begin UI/QuitButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:UI/QuitButton.png
+
 #begin UI/RetryButton.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -360,4 +366,28 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:UI/RetryButton.png
+
+#begin UI/SettingsButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:UI/SettingsButton.png
+
+#begin UI/StartButton.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:UI/StartButton.png
 
