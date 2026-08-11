@@ -41,7 +41,7 @@ public class Floor
 
             // generate the first room 
             roomQueue.Enqueue(roomArray[collumns / 2, rows / 2] =
-                new Room(player,"FloorOne", difficulty, rows / 2, collumns / 2,grideCenter , Direction.None, true, true));
+                new Room(player,"FloorOne", difficulty, rows / 2, collumns / 2,grideCenter , Direction.None, true));
             Room currentRoom = null;
             dequeueRoom = true;
 
@@ -279,14 +279,14 @@ public class Floor
 
                 if (!room.isStartRoom && doorCount == 1)
                 {
-                    if (!lockedRoomAssigned)
+                    if (!lockedRoomAssigned) // check if the locked room is assigned
                     {
-                        room.ChangeRoomType(Room.RoomType.LockedEndRoom);
+                        room.ChangeRoomType(Room.RoomType.LockedEndRoom); // change the current room to a locked one 
             
                         if (doorDirectionIndex != -1)
                         {
                             DirectionConvertor(doorDirectionIndex, room, out int neighborRow, out int neighborCol);
-                            Room adjacentRoom = GetRoomAt(neighborCol, neighborRow);
+                            Room adjacentRoom = GetRoomAt(neighborCol, neighborRow); // get the room next to it
                 
                             if (adjacentRoom != null)
                             {
@@ -294,7 +294,7 @@ public class Floor
                                 Direction oppDir = TransferIntToDirection(oppositeDirection);
                                 if (adjacentRoom.doors[oppositeDirection] != null)
                                 {
-                                    adjacentRoom.LockDoor(oppDir);
+                                    adjacentRoom.LockDoor(oppDir); // lock the door
                                 }
                             }
                         }
@@ -303,7 +303,7 @@ public class Floor
                     }
                     else
                     {
-                        room.ChangeRoomType(Room.RoomType.EndRoom);
+                        room.ChangeRoomType(Room.RoomType.EndRoom); // set it to end room
                     }
                     endRoomQueue.Enqueue(room);
                 }
@@ -321,10 +321,10 @@ public class Floor
         {
             if (room != null)
             {
-                room.FinnishedRoomGeneration();
+                room.FinnishedRoomGeneration(); // calls the function to generate the walls
             }
         }
-        PrintRoomArray();
+        PrintRoomArray(); // prints the floor in the console
         return this;
     }
 
@@ -394,7 +394,7 @@ public class Floor
         Console.WriteLine($"roomAmount:{roomAmount}, rows:{rows} , collumns:{collumns}");
 
 
-        gridCenter = grideCenter;
+        gridCenter = grideCenter; // sets the grid center 
     }
         
     public Room GetRoomAt(int col, int row)

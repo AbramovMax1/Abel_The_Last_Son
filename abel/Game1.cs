@@ -1,6 +1,4 @@
 ﻿using System;
-using Abel_The_Last_Son.World.Floor;
-using Abel_The_Last_Son.World.Walls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,7 +8,6 @@ using System.Linq;
 using Abel_The_Last_Son.Core.Helpers;
 using Abel_The_Last_Son.Enemies;
 using Abel_The_Last_Son.Manager;
-using Abel_The_Last_Son.World.Doors;
 using Abel_The_Last_Son.World.Trash;
 using Abel_The_Last_Son.Items;
 using Microsoft.Xna.Framework.Media;
@@ -69,15 +66,6 @@ public class Game1 : Game
     // ============
     // Player
     private Player player = null;
-
-    
-    // ============
-    // Doors
-    private LockedDoor lockedDoor = null;
-    
-    // ============
-    // Floors
-    private FloorLevelOne floorOne = null;
     
     // =============
     // NotCollectibles floor trash
@@ -161,7 +149,7 @@ public class Game1 : Game
         debugPixel.SetData(new[] { Color.White });
         
         // Floor
-        FloorLevelOne(); // wall sprit for level one
+        FloorLevelOne(); // first floor setup call
         
         //NotCollectible Trash
         TrashPaper(); 
@@ -319,18 +307,9 @@ public class Game1 : Game
         //heart
         HeartUI();
         //=============
-        
-        // Floor
-        floorOne = new FloorLevelOne();
-        floorOne.Start();
-        
         // Trash
         notColletiblesPaper = new NotColletiblesPaper();
         notColletiblesPaper.Start();
-        
-        // doors
-        lockedDoor = new LockedDoor();
-        lockedDoor.Start();
         
         // player
         player = new Player();
@@ -340,10 +319,7 @@ public class Game1 : Game
         
        
         // The list will use sortingOrder to decide what draws first.
-        sprites.Add(floorOne);
         sprites.Add(notColletiblesPaper);
-        //sprites.Add(wallLevelFirst);
-        sprites.Add(lockedDoor);
         sprites.Add(player);
     }
 

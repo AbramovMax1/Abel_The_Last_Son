@@ -8,9 +8,6 @@ public class Camera
     public Matrix Transform { get; private set; }
     private Viewport _viewport;
     private Vector2 _position;
-
-    // By using a property, we automatically update the camera's math 
-    // every single time you change its position!
     public Vector2 Position
     {
         get { return _position; }

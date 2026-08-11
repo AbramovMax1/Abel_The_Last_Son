@@ -14,13 +14,12 @@ namespace Abel_The_Last_Son;
 public class Room : Sprite
 {
     private bool isVisited = false;
-    private bool isCurrentRoom = false;
     private int enemyAmount;
     private bool roomCleared = false;
     public int row { get; private set; }
     public int collumn { get; private set; }
-    public List<Door> doors = new List<Door>(4);
-    public List<bool> doorGenerationAttempt = new List<bool>(4);
+    public List<Door> doors = new(4);
+    public List<bool> doorGenerationAttempt = new(4);
     public bool isStartRoom { get; private set; }
     public List<Sprite> objectList {get; private set;}
     
@@ -40,41 +39,44 @@ public class Room : Sprite
         bacicRoom,
         EndRoom,
         LockedEndRoom
-    }
-
+    } 
+    // dividing the room to a grid to spawn objects easily
     private Vector2[,] roomGrid;
     
     public Direction entranceDoorDirection { get; private set; }
 
     private RoomType currentRoom;
-
+    // prints the room as the room type and cords at console
     public override string ToString()
     {
-        if (currentRoom == RoomType.EndRoom)
+        switch (currentRoom)
         {
-            return $"E at {row}, {collumn}";
+            case RoomType.EndRoom:
+            {
+                return $"E at {row}, {collumn}";
+            }
+            case RoomType.LockedEndRoom:
+            {
+                return $"LE at {row}, {collumn}";
+            }
+            case RoomType.bacicRoom:
+            {
+                return $"B at {row}, {collumn}"; 
+            }
+            default: return $"{currentRoom.ToString()} at {row}, {collumn}";
         }
-        else if (currentRoom == RoomType.LockedEndRoom)
-        {
-            return $"LE at {row}, {collumn}";
-        }
-        else if (currentRoom == RoomType.bacicRoom)
-        {
-            return $"B at {row}, {collumn}";
-        }
-        else return $"{currentRoom.ToString()} at {row}, {collumn}";    
 
     }
-    
+    // get room values upon creation
     public Room(Player player, string spriteName, Floor.Difficulty difficulty, int currentRow, int currentCullumn, Vector2 grideSecnter ,
-       Direction entranceDoorDirection = Direction.None, bool isStartRoom = false, bool isCurrentRoom = false) : base(spriteName)
+       Direction entranceDoorDirection = Direction.None, bool isStartRoom = false) : base(spriteName)
     {
         currentPlayer = player;
         currentRoom = RoomType.bacicRoom;
         collumn = currentCullumn;
         row = currentRow;
 
-        objectList = new List<Sprite>();
+        objectList = new List<Sprite>(); // set a list to the stuff that will be in the room
         
         transform.scale = new Vector2(scale,scale); // make room size up to regular scale
         Start();
@@ -83,10 +85,7 @@ public class Room : Sprite
         float roomWidth = texture.Width * scale;
         float roomHeight = texture.Height * scale;
 
-        // Since the grid center is (collumns / 2, rows / 2), 
-        // we offset each room relative to the screen center based on its grid distance.
-        // (Note: we subtract 5 or 6 depending on your grid size, or dynamically calculate grid center).
-        // For an 11x11 grid, the center column/row is 5.
+        // calculate the offset of the room based on grid center
         float gridCenterX = grideSecnter.X * 0.5f; 
         float gridCenterY = grideSecnter.Y * 0.5f; 
 
@@ -96,36 +95,37 @@ public class Room : Sprite
         // Position the room relative to the screen center plus its grid offset
         transform.position = new Vector2(Game1._screenCenter.X + offsetX, Game1._screenCenter.Y - offsetY);
 
-        roomGrid = DivideRoomToGrid();
+        roomGrid = DivideRoomToGrid(); // divide the current room to a grid 
         
         this.isStartRoom = isStartRoom;
         this.entranceDoorDirection = entranceDoorDirection;
-        this.isCurrentRoom = isCurrentRoom;
 
         isVisited = false;
-        CalculateBasedOnDifficulty(difficulty);
-
+        CalculateBasedOnDifficulty(difficulty); // currently only set door sprite based on difficulty
+        
+        // set up the doors to be ready to start generating
         for (int i = 0; i < 4; i++)
         {
             doorGenerationAttempt.Add(false);
             doors.Add(null);
         }
 
-        if (!isStartRoom)
+        if (!isStartRoom) // if it is not a starting room add a door in the direction that connects to the other room
         {
             AddDoor(entranceDoorDirection, true);
             doorGenerationAttempt[(int)entranceDoorDirection] = true;
 
-            objectList = ChoosZombiesSpawnPositions();
-            //generate enemy's
+            objectList = ChoosObjectSpawnPositions(); //generate enemy's, obstecals and visual papers
+            
         }
-        else
+        else // if it is a starting room, the player visited it
         {
             isVisited = true;
         }
 
     }
-
+    
+    
     public override void Update(GameTime gameTime)
     {
         foreach (var door in doors)
@@ -134,14 +134,14 @@ public class Room : Sprite
 
             if (door.locked)
             {
-                // Create an expanded interaction boundary so touching/pressing against the door triggers it
+                // create just a little bigger hitbox to register key touche
                 Rectangle interactionBox = door.Collider;
                 interactionBox.Inflate(8, 8); // Expands the detection box by 8 pixels in all directions
 
                 // Check if player interacts with the locked door and has at least one key
                 if (currentPlayer != null && interactionBox.Intersects(currentPlayer.Collider))
                 {
-                    if (currentPlayer.GetKeyCount() > 0)
+                    if (currentPlayer.GetKeyCount() > 0) // check if the player owns any keys
                     {
                         currentPlayer.UseKey(); // Consumes a key
                         door.Unlock(); // Unlocks and opens the door
@@ -164,7 +164,7 @@ public class Room : Sprite
 
     public List<Rectangle> WallColliders { get; private set; } = new List<Rectangle>();
 
-    private void CreateWallsAndDoors()
+    private void CreateWallsAndDoors() //creat the walls based on if there is a door or not
 {
     int wallThickness = (int)(12 * scale);
     int doorSize = (int)(12 * scale);
@@ -254,22 +254,22 @@ public class Room : Sprite
     }
 }
     
-    // A helper method to keep the code above clean
+    // create a wall based on the given positions
     private void CreateWallSegment(float xPosition, float yPosition, float width, float height)
     {
-        // Just create the Rectangle collider and add it to the list.
+        //create a Rectangle collider and add it to the list.
         Rectangle wallRect = new Rectangle((int)xPosition, (int)yPosition, (int)width, (int)height);
         WallColliders.Add(wallRect);
     }
     
-    public void AddDoor(Direction direction, bool doorExist)
+    public void AddDoor(Direction direction, bool doorExist) // adds a door in the desired direction
     {
         if (!doorExist) return;
         bool isOpen = isStartRoom;
         doors[DirectionToNumber(direction)] = new Door(direction, closedSpriteName, openSpriteName, lockedSpriteName, isOpen, false);
         doors[DirectionToNumber(direction)].Start();
     }
-    public void LockDoor(Direction direction)
+    public void LockDoor(Direction direction) // locks the door in the direction
     {
         int index = DirectionToNumber(direction);
         if (index >= 0 && doors[index] != null)
@@ -283,7 +283,7 @@ public class Room : Sprite
         currentRoom = newRoomType;
     }
 
-    private void CalculateBasedOnDifficulty(Floor.Difficulty difficulty)
+    private void CalculateBasedOnDifficulty(Floor.Difficulty difficulty) // set the door sprite to the sellected difficulty
     {
         Random rnd = new Random();
         switch (difficulty)
@@ -312,7 +312,7 @@ public class Room : Sprite
         }
     }
 
-    public void FinnishedRoomGeneration()
+    public void FinnishedRoomGeneration() 
     {
         CreateWallsAndDoors();
     }
@@ -337,7 +337,7 @@ public class Room : Sprite
     private Vector2[,] DivideRoomToGrid()
     {
         // Create the 2D array to hold the Vector2 positions
-        Vector2[,] gridPositions = new Vector2[15, 7];
+        Vector2[,] gridPositions = new Vector2[15, 7]; 
     
         float cellWidth = 106;
         float cellHeight = 90;
@@ -350,13 +350,12 @@ public class Room : Sprite
         // Assuming transform.position is the exact center of the room.
         float startX = transform.position.X - (totalGridWidth / 2f) + (cellWidth / 2f);
         float startY = transform.position.Y - (totalGridHeight / 2f) + (cellHeight / 2f);
-
-        // Your nested loops!
+        
         for (int col = 0; col < 15; col++)
         {
             for (int row = 0; row < 7; row++)
             {
-                // MULTIPLY the current row/col by the cell size to get the exact world position
+                // multiply the current row/col by the cell size to get the exact world position
                 float cellX = startX + (col * cellWidth);
                 float cellY = startY + (row * cellHeight);
 
@@ -369,12 +368,12 @@ public class Room : Sprite
     }
     
 
-    List<Sprite> ChoosZombiesSpawnPositions()
+    List<Sprite> ChoosObjectSpawnPositions()
     {
         List<Sprite> tempList = new();
         Random rnd = new Random();
         int chosenEnemySpawn = rnd.Next(4);
-        switch (chosenEnemySpawn)
+        switch (chosenEnemySpawn) // "randomis" the selected room spawns
         {
             case 0:
             {

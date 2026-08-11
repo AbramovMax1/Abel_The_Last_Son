@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/Images/pixel.png</SourceFile>
-  <SourceTime>2026-08-09T16:19:33.7762373+03:00</SourceTime>
-  <DestFile>C:/Users/maxsi/RiderProjects/Abel The Last Son/Abel_The_Last_Son/abel/Content/bin/DesktopGL/Content/Images/pixel.xnb</DestFile>
-  <DestTime>2026-08-10T21:57:00.3397464+03:00</DestTime>
+  <SourceFile>C:/unity projects/Abel_The_Last_Son/abel/Content/Images/pixel.png</SourceFile>
+  <SourceTime>2026-08-10T22:01:33.7966723+03:00</SourceTime>
+  <DestFile>C:/unity projects/Abel_The_Last_Son/abel/Content/bin/DesktopGL/Content/Images/pixel.xnb</DestFile>
+  <DestTime>2026-08-11T13:28:08.1747753+03:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2025-10-20T17:25:32+03:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

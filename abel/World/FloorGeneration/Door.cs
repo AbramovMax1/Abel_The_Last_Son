@@ -1,7 +1,6 @@
 ﻿using System;
 using Abel_The_Last_Son;
 using Abel_The_Last_Son.Core.Enums;
-using Abel_The_Last_Son.World.Doors;
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -38,23 +37,18 @@ public class Door : Sprite, ICollidable
         this.openSprite = openSprite;
         this.lockedSprite = lockedSprite;
 
-        UpdateTexture();
+        UpdateTexture(); 
 
         float scale = 10f;
         transform.scale = new Vector2(scale, scale);
 
+        // this specific door is rotated, so we rotate it to the correct rotation
         if (closedSprite == "DoorTwoLocked" || lockedSprite == "DoorTwoLocked") 
         {
             transform.rotation -= MathHelper.ToRadians(90);
         }
     
         HandleRotation();
-    }
-
-    public override void Start()
-    {
-        base.Start();
-        
     }
 
     public void Open()
@@ -90,7 +84,7 @@ public class Door : Sprite, ICollidable
     
     public void ConvertToLocked(string newLockedSprite)
     {
-        this.lockedSprite = newLockedSprite;
+        lockedSprite = newLockedSprite;
         Lock();
     }
     private void UpdateTexture()
@@ -99,7 +93,7 @@ public class Door : Sprite, ICollidable
         var spriteSheet = SpriteManager.GetSprite(targetSprite);
         if (spriteSheet != null)
         {
-            this.texture = spriteSheet.texture;
+            texture = spriteSheet.texture;
         }
     }
     
